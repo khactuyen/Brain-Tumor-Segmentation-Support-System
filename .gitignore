@@ -1,5 +1,10 @@
-learn_pandas_basic
-practice_Sklearn.ipynb
+Learn_Pandas_basic.ipynb
+pratice_Sklearn.ipynb
 .env/
+.venv/
 Datasets/
-src/
+checkpoints/
+results/
+__pycache__/
+*.pyc
+.cache/

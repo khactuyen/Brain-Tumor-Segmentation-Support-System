@@ -1,0 +1,61 @@
+# Default Configuration for Brain Tumor Segmentation Support System
+
+project:
+  name: "Brain Tumor Segmentation Support System"
+  version: "1.0.0"
+
+paths:
+  data_root: "Datasets/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData"
+  checkpoints_dir: "checkpoints"
+  results_dir: "results"
+  logs_dir: "logs"
+
+data:
+  modalities: ["t1n", "t1c", "t2w", "t2f"]
+  in_channels: 4
+  num_classes: 4  # 0: background, 1: NCR/NET, 2: ED, 3: ET
+  target_shape: [240, 240, 160]
+  spatial_patch_size: [128, 128, 128]
+  normalize_method: "z_score"
+  val_ratio: 0.1
+  test_ratio: 0.1
+  seed: 42
+
+models:
+  unet3d:
+    spatial_dims: 3
+    in_channels: 4
+    out_channels: 4
+    channels: [16, 32, 64, 128, 256]
+    strides: [2, 2, 2, 2]
+    num_res_units: 2
+    dropout: 0.2
+    checkpoint: "checkpoints/unet_brats_best.pth"
+
+  swin_unetr:
+    img_size: [128, 128, 128]
+    in_channels: 4
+    out_channels: 4
+    feature_size: 48
+    use_checkpoint: true
+    checkpoint: "checkpoints/swin_unetr_brats_best.pth"
+
+training:
+  batch_size: 2
+  num_workers: 2
+  learning_rate: 0.0002
+  weight_decay: 0.0001
+  max_epochs: 100
+  val_interval: 2
+  use_amp: true  # Automatic Mixed Precision
+  loss: "dice_ce"
+
+inference:
+  sw_roi_size: [128, 128, 128]
+  sw_batch_size: 4
+  overlap: 0.5
+  mode: "gaussian"
+  post_processing:
+    remove_small_objects: true
+    min_size: 64
+    fill_holes: true
