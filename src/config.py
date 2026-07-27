@@ -2,6 +2,7 @@
 Configuration Manager for Brain Tumor Segmentation Support System.
 """
 
+import os
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 from .utils.io import load_yaml, ensure_dir
@@ -63,7 +64,35 @@ class Config:
 
     @property
     def data_root(self) -> Path:
-        return Path(self.get("paths.data_root", "Datasets/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData"))
+        """
+        Resolve BraTS dataset path.
+
+        Priority:
+        1. BRATS_DATA_ROOT environment variable
+        2. DATA_ROOT environment variable
+        3. paths.data_root from configs/default.yaml
+        4. common Google Drive / Colab locations
+        """
+        candidates = [
+            os.getenv("BRATS_DATA_ROOT"),
+            os.getenv("DATA_ROOT"),
+            self.get(
+                "paths.data_root",
+                "Datasets/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            ),
+            "/content/drive/MyDrive/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "/content/drive/MyDrive/SIC_Capstone_2026/data/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "/content/drive/MyDrive/SIC_Capstone_2026/data/BraTS2023/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+        ]
+
+        for candidate in candidates:
+            if not candidate:
+                continue
+            path = Path(candidate).expanduser()
+            if path.exists():
+                return path
+
+        return Path(candidates[2]).expanduser()
 
     @property
     def checkpoints_dir(self) -> Path:
