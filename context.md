@@ -32,6 +32,17 @@
   8. MONAI transforms/DataLoader;
   9-12. model training, evaluation, and visualization.
 
+## 2026-07-28 Các Nhiệm vụ Đã Hoàn thành
+
+- Tiếp tục nhiệm vụ notebook còn dang dở (phiên trước bị dừng giữa lúc chèn phần EDA).
+- **Phần EDA** (`SIC_Capstone.ipynb`):
+  - Thêm tiêu đề markdown `## 3.6 EDA`.
+  - Thêm ô **EDA 1**: trực quan hóa 4 modalities trên cùng một lát cắt axial + overlay mask phân đoạn (tự động chọn lát cắt có nhiều u nhất). Ô EDA 2 (histogram cường độ + thống kê lớp u + box plot thể tích) đã có sẵn từ trước.
+- **Kiểm tra DataLoader (Sanity-Check)** (`SIC_Capstone.ipynb`):
+  - Thêm tiêu đề `### 5.1 Sanity Check` + ô code ngay sau ô tạo DataLoader: kiểm tra (assert) shape của batch/patch, dải giá trị nhãn `{0,1,2,3}`, in ra dải cường độ, và trực quan hóa một augmented patch + mask.
+  - Sửa lỗi vị trí: `cell id` của NotebookEdit là **chỉ số vị trí (positional index)** chứ không phải id cố định, nên phải chèn ô sanity-check SAU ô tạo `train_loader`, không phải sau ô định nghĩa class.
+- Luồng notebook cuối cùng: Data Understanding (3.5) → EDA (3.6: EDA1 + EDA2) → Dataset Loader (4) → Augmentation/DataLoader (5) → Sanity Check (5.1) → Huấn luyện/Đánh giá/Trực quan hóa (6-9). JSON đã kiểm tra hợp lệ (25 ô).
+
 ## Current Notes
 
 - No `Datasets/` or `data/` folder was found in the local workspace during this update. The notebook now handles that case gracefully and prints instructions to set the dataset path.
