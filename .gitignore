@@ -5,6 +5,9 @@ pratice_Sklearn.ipynb
 Datasets/
 checkpoints/
 results/
+models/*.onnx
+models/*.pt
+*_learning_curves.png
 __pycache__/
 *.pyc
 .cache/
@@ -13,3 +16,5 @@ doc.md
 PHASE_EXECUTION_LOOP_PROTOCOL.md
 PROJECT_PLAN_AND_TASKS.md
 update_notebook.js
+add_cells_to_notebook.py
+do_refactor.bat

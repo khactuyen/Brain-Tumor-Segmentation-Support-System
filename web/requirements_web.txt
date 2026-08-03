@@ -1,0 +1,19 @@
+# Web App Dependencies — Brain Tumor Segmentation API
+# Cài đặt: pip install -r requirements_web.txt
+
+# ── Core Web Framework ──────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9          # upload file support
+
+# ── Medical Imaging ─────────────────────────────────────────────────────────
+nibabel>=5.0.0
+numpy>=1.24.0
+
+# ── Model Inference ─────────────────────────────────────────────────────────
+# Chọn 1 trong 2:
+onnxruntime-gpu>=1.18.0          # nếu có NVIDIA GPU (khuyến nghị)
+# onnxruntime>=1.18.0            # CPU only (bỏ comment nếu không có GPU)
+
+# ── Optional: TorchScript model support ────────────────────────────────────
+# torch>=2.0.0                   # bỏ comment nếu dùng .pt TorchScript model
