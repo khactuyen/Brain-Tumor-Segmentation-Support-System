@@ -18,7 +18,6 @@ Hệ thống hỗ trợ bác sĩ và nhà nghiên cứu tự động phân đo�
    - **Enhancing Tumor (ET):** Vùng u bắt thuốc (nhãn 3)
 6. **Ước Tính Thể Tích Khối U:** Tự động tính toán thể tích u não ra đơn vị xăng-ti-mét khối (cm³) dựa trên kích thước voxel của ảnh gốc.
 7. **Trực Quan Hóa Tương Tác:** Hiển thị lát cắt trên cả 3 trục (Axial, Coronal, Sagittal) chồng lớp mặt nạ phân đoạn (Overlay) nhiều màu sắc.
-8. **Xuất Báo Cáo Tự Động:** Hỗ trợ tạo và tải báo cáo kết quả định dạng PDF/HTML.
 
 ---
 
@@ -26,34 +25,22 @@ Hệ thống hỗ trợ bác sĩ và nhà nghiên cứu tự động phân đo�
 
 ```text
 SIC_Capstone 2026/
-├── configs/                                  # Cấu hình hệ thống
-│   └── default.yaml                          # File yaml chứa thông số mô hình, đường dẫn, hyperparams
 ├── Datasets/                                 # Bộ dữ liệu BraTS 2023 (được ignore trên git)
 │   └── brats2023-gli-dataset/
 │       └── ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData/
 ├── checkpoints/                              # Lưu weights mô hình huấn luyện (.pth)
-│   ├── unet_brats_best.pth
-│   └── swin_unetr_brats_best.pth
-├── results/                                  # Đầu ra của quá trình suy luận
-│   ├── masks/                                # Mask dự đoán định dạng .nii.gz
-│   ├── overlays/                             # Trực quan slice PNG
-│   └── reports/                              # Báo cáo PDF/HTML
-├── scripts/                                  # Các python scripts độc lập
-│   ├── train_unet.py                         # Huấn luyện 3D U-Net
-│   └── train_swin_unetr.py                   # Huấn luyện Swin UNETR
-├── app/                                      # Ứng dụng giao diện người dùng (Streamlit)
-│   ├── streamlit_app.py                      # File chạy Streamlit main app
-│   └── components/                           # Các component UI tương tác
-├── src/                                      # Mã nguồn cốt lõi (Core Engine)
-│   ├── config.py                             # Quản lý cấu hình dự án
-│   ├── data/                                 # Xử lý dữ liệu (DataLoader, Preprocessor, Dataset)
-│   ├── models/                               # Kiến trúc mô hình AI (Base, U-Net, Swin UNETR)
-│   ├── training/                             # Bộ huấn luyện (Trainer, Loss, Augmentation)
-│   ├── inference/                            # Bộ suy luận (Inference Engine, Postprocessor)
-│   ├── visualization/                        # Trực quan hóa (Viewer, Comparison charts)
-│   └── utils/                                # Tiện ích (Metrics, Logger, I/O)
-├── SIC_Capstone.ipynb                        # Jupyter Notebook phục vụ R&D, EDA và Demo nhanh
-├── requirements.txt                          # Khai báo các thư viện phụ thuộc
+│   ├── unet_best.pth
+│   └── swin_unetr_best.pth
+├── models/                                   # Lưu model đã export dạng production (.onnx, .pt)
+│   ├── unet.onnx
+│   └── unet.pt
+├── web/                                      # Ứng dụng Web App Inference (FastAPI) [MỚI]
+│   ├── app.py                                # API server chính (FastAPI + Swagger UI)
+│   ├── inference_utils.py                    # Tiện ích suy diễn (ONNX Runtime, Preprocessing)
+│   ├── requirements_web.txt                  # Thư viện riêng cho Web Server
+│   └── README.md                             # Hướng dẫn chạy Web App
+├── SIC_Capstone.ipynb                        # Notebook chính (EDA, Training, Evaluation, Export ONNX)
+├── requirements.txt                          # Thư viện phục vụ huấn luyện (Colab / Local GPU)
 ├── PRD.md                                    # Tài liệu Yêu cầu Sản phẩm
 └── doc.md                                    # Tài liệu Kiến trúc Hệ thống
 ```
@@ -65,7 +52,7 @@ SIC_Capstone 2026/
 ### 1. Yêu Cầu Hệ Thống
 - Hệ điều hành: Windows / Linux / macOS
 - Python từ phiên bản **3.8** trở lên
-- Card đồ họa hỗ trợ CUDA (khuyên dùng để huấn luyện và suy luận nhanh)
+- Card đồ họa hỗ trợ CUDA (khuyên dùng khi chạy notebook train)
 
 ### 2. Các Bước Cài Đặt
 
@@ -91,10 +78,14 @@ SIC_Capstone 2026/
      ```
 
 4. **Cài đặt các thư viện phụ thuộc:**
-   ```bash
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
+   - Dành cho huấn luyện (Notebook):
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - Dành cho Web Inference (FastAPI):
+     ```bash
+     pip install -r web/requirements_web.txt
+     ```
 
 ---
 
@@ -113,42 +104,46 @@ Datasets/
         │   └── BraTS-GLI-00000-000-seg.nii.gz    # Mask phân đoạn chuẩn (Ground Truth)
         └── ...
 ```
-*Lưu ý: Bạn có thể cập nhật đường dẫn dữ liệu trong file cấu hình `configs/default.yaml`.*
 
 ---
 
-## 🚀 Hướng Dẫn Sử Dụng
+## 🚀 Quy Trình Huấn Luyện & Triển Khai
 
-### 1. Phân Tích Dữ Liệu (EDA) & Tiền Xử Lý trên Jupyter Notebook
-Khởi chạy Jupyter Notebook hoặc VS Code để mở file `SIC_Capstone.ipynb`. Notebook này chứa luồng nghiên cứu hoàn chỉnh từ:
-- Cấu hình & Đọc dữ liệu NIfTI
-- Thống kê & Trực quan hóa EDA (Modalities, Mask Overlay, Intensity distribution, Volume)
-- Tiền xử lý dữ liệu và tạo PyTorch DataLoader
-- Chạy thử nghiệm huấn luyện/đánh giá mô hình.
+### Bước 1: Huấn luyện & Xuất Model (Notebook)
+Mở file `SIC_Capstone.ipynb` trên Google Colab hoặc môi trường Jupyter Local để thực hiện huấn luyện:
+1. **EDA & Data Loading** (Mục 1-3.14): Khảo sát dữ liệu, phân tích class imbalance.
+2. **Dataset & Transform** (Mục 4-5): Khởi tạo tiền xử lý ảnh và DataLoader.
+3. **Build Model** (Mục 6): Lựa chọn kiến trúc `unet` hoặc `swin_unetr` từ thư viện MONAI.
+4. **Huấn luyện** (Mục 7): Chạy vòng lặp training, tự động validate và lưu file checkpoint tốt nhất `.pth` vào thư mục `checkpoints/`.
+5. **Đồ thị huấn luyện** (Mục 8): Trực quan hóa train loss và val dice.
+6. **Export Model** (Mục 9): Tự động trace và xuất model sang 2 định dạng:
+   - **TorchScript** (`models/unet.pt`)
+   - **ONNX** (`models/unet.onnx`)
 
-### 2. Huấn Luyện Mô Hình
-Để chạy huấn luyện các mô hình độc lập qua dòng lệnh (CLI):
-* **Huấn luyện mô hình 3D U-Net:**
-  ```bash
-  python scripts/train_unet.py
-  ```
-* **Huấn luyện mô hình Swin UNETR:**
-  ```bash
-  python scripts/train_swin_unetr.py
-  ```
-Các tham số huấn luyện (Learning rate, Batch size, Epochs,...) đều được định nghĩa tập trung trong `configs/default.yaml`. Checkpoint tốt nhất sẽ tự động lưu vào thư mục `checkpoints/`.
+### Bước 2: Chạy Web Inference API (FastAPI)
+Sau khi có file model trong thư mục `models/`, bạn có thể khởi chạy server dự đoán nhanh chóng trên máy local mà không cần đến PyTorch (bằng cách dùng ONNX Runtime):
 
-### 3. Khởi Chạy Giao Diện Web (Streamlit UI)
-Sau khi đã có checkpoint mô hình trong thư mục `checkpoints/`, bạn có thể khởi chạy ứng dụng web Streamlit bằng câu lệnh:
-```bash
-streamlit run app/streamlit_app.py
-```
-Giao diện Streamlit cho phép bạn:
-1. Upload các file ảnh MRI của một ca bệnh.
-2. Chọn mô hình suy luận (U-Net, Swin UNETR hoặc cả hai để so sánh).
-3. Xem lát cắt MRI kèm theo mặt nạ khối u bằng thanh kéo trực quan.
-4. Đánh giá độ chính xác (so với Ground Truth nếu có) và ước lượng thể tích u.
-5. Xuất báo cáo PDF/HTML của ca bệnh.
+1. **Cài đặt thư viện cho web:**
+   ```bash
+   pip install -r web/requirements_web.txt
+   ```
+
+2. **Khởi chạy Server:**
+   ```bash
+   # Chạy với model ONNX mặc định
+   MODEL_PATH=models/unet.onnx uvicorn web.app:app --host 0.0.0.0 --port 8000 --reload
+   ```
+
+3. **Sử dụng API:**
+   - Truy cập giao diện API tương tác và thử nghiệm (Swagger UI): http://localhost:8000/docs
+   - Gửi yêu cầu dự đoán với 4 file ảnh MRI:
+     ```bash
+     curl -X POST http://localhost:8000/predict \
+       -F "t1n=@path/to/case-t1n.nii.gz" \
+       -F "t1c=@path/to/case-t1c.nii.gz" \
+       -F "t2w=@path/to/case-t2w.nii.gz" \
+       -F "t2f=@path/to/case-t2f.nii.gz"
+     ```
 
 ---
 
@@ -165,16 +160,13 @@ Bộ dữ liệu BraTS quy định các nhãn trong file phân đoạn gốc (`-
 * **Tumor Core (TC - Lõi u):** Phối hợp Nhãn 1 và 3.
 * **Enhancing Tumor (ET - U hoạt động):** Nhãn 3.
 
-Hệ thống tự động chuyển đổi định dạng và đánh giá mô hình dựa trên các chỉ số Dice, IoU, Precision, Recall, HD95 trên 3 vùng này.
-
 ---
 
 ## 👥 Thành Viên Thực Hiện (SIC Capstone 2026)
 Dự án được phân công triển khai phối hợp giữa các nhóm thành viên:
-* **Nhóm 1 (Data Pipeline):** Quản lý cấu hình, tiền xử lý, DataLoader và tính toàn vẹn dữ liệu.
-* **Nhóm 2 (Model Engineering):** Thiết kế kiến trúc và huấn luyện 3D U-Net & Swin UNETR.
-* **Nhóm 3 (Inference Engine):** Xây dựng Sliding Window Inference, hậu xử lý khử nhiễu và lập công thức tính y khoa.
-* **Nhóm 4 (UI & Visualization):** Phát triển ứng dụng Streamlit, vẽ đồ thị so sánh và sinh báo cáo tự động.
+* **Nhóm 1 (Data & Preprocessing):** Quản lý tiền xử lý, DataLoader, xử lý mất cân bằng và độ sạch của dữ liệu.
+* **Nhóm 2 (Model Engineering):** Thiết kế kiến trúc và huấn luyện 3D U-Net & Swin UNETR trên Notebook, xuất TorchScript và ONNX.
+* **Nhóm 3 (Web Inference & Deployment):** Xây dựng Sliding Window Inference bằng ONNX Runtime, phát triển web API FastAPI phục vụ tích hợp.
 
 ---
-*Phiên bản dự án: 1.0.0. Tài liệu hướng dẫn phát triển và tài liệu yêu cầu chi tiết có thể tham khảo thêm tại `doc.md` và `PRD.md`.*
+*Phiên bản dự án: 2.0.0. Tài liệu hướng dẫn phát triển và tài liệu yêu cầu chi tiết có thể tham khảo thêm tại `doc.md` và `PRD.md`.*
