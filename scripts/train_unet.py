@@ -15,7 +15,6 @@ from src.config import get_config
 from src.data import DataSplitter, create_dataloaders
 from src.models import build_model
 from src.training import SegmentationTrainer, get_loss_function
-from src.utils.logger import logger
 
 
 def main():
@@ -30,26 +29,26 @@ def main():
     cfg = get_config()
     data_root = args.data_root or str(cfg.data_root)
 
-    logger.info("Initializing Data Splitter...")
+    print("Initializing Data Splitter...")
     splitter = DataSplitter(data_root=data_root, val_ratio=0.1, test_ratio=0.1)
     split_config = splitter.get_split(seed=42)
 
-    logger.info("Creating DataLoaders...")
+    print("Creating DataLoaders...")
     dataloaders = create_dataloaders(
         data_root=data_root,
         split_config=split_config,
         batch_size=args.batch_size,
     )
 
-    logger.info("Building 3D U-Net Model...")
+    print("Building 3D U-Net Model...")
     model = build_model(
         "unet3d",
         in_channels=cfg.get("data.in_channels", 4),
         out_channels=cfg.get("data.num_classes", 4),
     )
-    logger.info(f"Model Parameters: {model.num_parameters():,}")
+    print(f"Model Parameters: {model.num_parameters():,}")
 
-    logger.info("Setting up Trainer...")
+    print("Setting up Trainer...")
     trainer = SegmentationTrainer(
         model=model,
         train_loader=dataloaders["train_loader"],
@@ -60,7 +59,7 @@ def main():
         model_name="unet_brats",
     )
 
-    logger.info("Starting Training...")
+    print("Starting Training...")
     trainer.train(max_epochs=args.epochs, val_interval=2)
 
 
