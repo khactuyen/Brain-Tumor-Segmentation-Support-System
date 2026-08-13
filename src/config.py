@@ -57,10 +57,13 @@ class Config:
                 return default
         return val
 
-    # Convenience properties
     @property
     def project_name(self) -> str:
         return self.get("project.name", "Brain Tumor Segmentation Support System")
+
+    @property
+    def root_dir(self) -> Path:
+        return Path(__file__).resolve().parent.parent
 
     @property
     def data_root(self) -> Path:
@@ -73,44 +76,127 @@ class Config:
         3. paths.data_root from configs/default.yaml
         4. common Google Drive / Colab locations
         """
-        candidates = [
+        raw_candidates = [
             os.getenv("BRATS_DATA_ROOT"),
             os.getenv("DATA_ROOT"),
             self.get(
                 "paths.data_root",
                 "Datasets/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
             ),
+            # Windows Google Drive for Desktop locations
+            "G:/My Drive/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "G:/MyDrive/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "G:/My Drive/SIC_Capstone_2026/data/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "D:/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "C:/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            # Google Colab (Linux) locations
             "/content/drive/MyDrive/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
             "/content/drive/MyDrive/SIC_Capstone_2026/data/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
             "/content/drive/MyDrive/SIC_Capstone_2026/data/BraTS2023/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
         ]
 
-        for candidate in candidates:
-            if not candidate:
+        for cand in raw_candidates:
+            if not cand:
                 continue
-            path = Path(candidate).expanduser()
-            if path.exists():
-                return path
+            path = Path(cand).expanduser()
+            if path.is_absolute():
+                if path.exists():
+                    return path
+            else:
+                if path.exists():
+                    return path.resolve()
+                proj_path = self.root_dir / path
+                if proj_path.exists():
+                    return proj_path.resolve()
 
-        return Path(candidates[2]).expanduser()
+        # Dynamic Windows Drive Letter Scanner (scans G:, H:, I:, D:, C:, etc. for Google Drive for Desktop)
+        import string
+        sub_paths = [
+            "My Drive/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "MyDrive/BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "BraTS2023/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+            "ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData",
+        ]
+        for letter in "GHIJKLMNOPQRSTUVWXYZCDEFAB":
+            root_drive = Path(f"{letter}:/")
+            if root_drive.exists():
+                for sub in sub_paths:
+                    candidate = root_drive / sub
+                    if candidate.exists():
+                        return candidate.resolve()
+
+        default_rel = Path(raw_candidates[2])
+        return (self.root_dir / default_rel).resolve() if not default_rel.is_absolute() else default_rel
 
     @property
     def checkpoints_dir(self) -> Path:
         p = Path(self.get("paths.checkpoints_dir", "checkpoints"))
+        if not p.is_absolute():
+            p = self.root_dir / p
         ensure_dir(p)
-        return p
+        return p.resolve()
 
     @property
     def results_dir(self) -> Path:
         p = Path(self.get("paths.results_dir", "results"))
+        if not p.is_absolute():
+            p = self.root_dir / p
         ensure_dir(p)
-        return p
+        return p.resolve()
 
     @property
     def logs_dir(self) -> Path:
         p = Path(self.get("paths.logs_dir", "logs"))
+        if not p.is_absolute():
+            p = self.root_dir / p
         ensure_dir(p)
-        return p
+        return p.resolve()
+
+    @property
+    def processed_npz_dir(self) -> Path:
+        """
+        Resolve processed .npz dataset path (local or Google Drive).
+        """
+        raw_candidates = [
+            os.getenv("BRATS_CACHE_DIR"),
+            os.getenv("BRATS_PROCESSED_DIR"),
+            self.get("paths.processed_npz_dir", "Datasets/processed_npz"),
+            "G:/My Drive/BraTS2023/processed_npz",
+            "G:/MyDrive/BraTS2023/processed_npz",
+            "D:/BraTS2023/processed_npz",
+            "/content/drive/MyDrive/BraTS2023/processed_npz",
+            "/content/drive/MyDrive/SIC_Capstone_2026/data/BraTS2023/processed_npz",
+        ]
+        for cand in raw_candidates:
+            if not cand:
+                continue
+            path = Path(cand).expanduser()
+            if path.is_absolute():
+                if path.exists():
+                    return path
+            else:
+                if path.exists():
+                    return path.resolve()
+                proj_path = self.root_dir / path
+                if proj_path.exists():
+                    return proj_path.resolve()
+
+        sub_npz_paths = [
+            "My Drive/BraTS2023/processed_npz",
+            "MyDrive/BraTS2023/processed_npz",
+            "BraTS2023/processed_npz",
+            "processed_npz",
+        ]
+        for letter in "GHIJKLMNOPQRSTUVWXYZCDEFAB":
+            root_drive = Path(f"{letter}:/")
+            if root_drive.exists():
+                for sub in sub_npz_paths:
+                    candidate = root_drive / sub
+                    if candidate.exists():
+                        return candidate.resolve()
+
+        default_rel = Path(raw_candidates[2])
+        return (self.root_dir / default_rel).resolve() if not default_rel.is_absolute() else default_rel
 
     @property
     def num_classes(self) -> int:
