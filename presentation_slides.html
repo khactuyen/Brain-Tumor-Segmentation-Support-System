@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo Cáo Capstone SIC: Brain Tumor Segmentation Support System</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: #151c2c;
+      --bg-card-hover: #1c263c;
+      --primary: #06b6d4;
+      --primary-glow: rgba(6, 182, 212, 0.25);
+      --secondary: #3b82f6;
+      --accent: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --border-color: #1e293b;
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .bg-grid {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      z-index: 1;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+
+    .brand-logo i {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .badge-tag {
+      background: rgba(6, 182, 212, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      padding: 2.5rem 4.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateX(60px) scale(0.98);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: all;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      transform: translateX(-60px) scale(0.98);
+    }
+
+    .slide-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .slide-category {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .slide-title {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+    }
+
+    .slide-title span {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.85rem;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(6, 182, 212, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 0.65rem;
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .card-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .citation-tag {
+      font-size: 0.75rem;
+      color: #38bdf8;
+      font-family: var(--font-mono);
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    .why-box {
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px dashed rgba(6, 182, 212, 0.4);
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+      color: #38bdf8;
+      line-height: 1.5;
+    }
+
+    .why-box strong {
+      color: #e0f2fe;
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1));
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 0.85rem;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-label {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .text-box {
+      background: #060913;
+      border: 1px solid #1e293b;
+      border-left: 4px solid var(--primary);
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+      margin-top: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .custom-table th, .custom-table td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: 0.88rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .custom-table th {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .custom-table td {
+      color: var(--text-muted);
+    }
+
+    .bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 2.5rem;
+      border-top: 1px solid var(--border-color);
+      background: rgba(11, 15, 25, 0.9);
+      backdrop-filter: blur(12px);
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      max-width: 300px;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 10%;
+      transition: width 0.3s ease;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .btn-nav:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #000;
+      transform: scale(1.05);
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .title-slide {
+      text-align: center;
+      align-items: center;
+    }
+
+    .title-slide .slide-title {
+      font-size: 3.2rem;
+      max-width: 900px;
+      margin: 1rem 0 1.25rem 0;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .hero-tags {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+
+  <div class="deck-container">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="brand-logo">
+        <i class="fa-solid fa-brain"></i>
+        <span>Samsung Innovation Campus (SIC)</span>
+      </div>
+      <span class="badge-tag"><i class="fa-solid fa-shield-halved"></i> AI Capstone Project</span>
+    </header>
+
+    <!-- Slide Viewport -->
+    <main class="slide-viewport">
+
+      <!-- SLIDE 1: Trang Bìa (Samsung Innovation Campus) -->
+      <section class="slide title-slide active" id="slide-1">
+        <div class="slide-category">
+          <i class="fa-solid fa-graduation-cap"></i> Samsung Innovation Campus — Trí Tuệ Nhân Tạo (AI)
+        </div>
+        <h1 class="slide-title">Hệ Thống Hỗ Trợ Phân Đoạn <span>Khối U Não 3D MRI</span> BraTS 2023</h1>
+        <p class="subtitle">Dự án Capstone ứng dụng Mô hình Học sâu 3D U-Net & Pipeline Dữ liệu Siêu Tốc theo quy trình Design Thinking & CRISP-DM.</p>
+        
+        <div class="hero-tags">
+          <span class="badge-tag"><i class="fa-solid fa-microchip"></i> 3D U-Net Architecture</span>
+          <span class="badge-tag"><i class="fa-solid fa-bolt"></i> Fast NPZ Drive Cache</span>
+          <span class="badge-tag"><i class="fa-solid fa-file-pdf"></i> Auto PDF Medical Report</span>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: Bước 1: XÁC ĐỊNH (DEFINE) — Thách Thức Lâm Sàng (CHỈ NÊU NỖI ĐAU) -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-bullseye"></i> Bước 1: XÁC ĐỊNH (DEFINE) — CRISP-DM: Tìm Hiểu Nghiệp Vụ</div>
+          <h2 class="slide-title">Thách Thức Lâm Sàng & <span>Minh Chứng Y Khoa</span></h2>
+        </div>
+
+        <div class="grid-4">
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-clock"></i></div>
+            <h3 class="card-title">Tốn 30-60 Phút/Ca</h3>
+            <p class="card-text">Khoanh vùng 240x240x155 voxels thủ công. Biến thiên kết quả giữa các bác sĩ tới <strong>15% - 28%</strong>.</p>
+            <span class="citation-tag">📌 Bakas et al. (Nature Sci Data, 2017)</span>
+          </div>
+
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-skull-crossbones"></i></div>
+            <h3 class="card-title">GBM Tỷ Lệ Sống dưới 6.8%</h3>
+            <p class="card-text">U nguyên bào đệm Glioblastoma (GBM) chiếm <strong>49.1% ca u brain ác tính</strong>. Cần chẩn đoán cực sớm.</p>
+            <span class="citation-tag">📌 CBTRUS Report (Neuro-Oncology 2022)</span>
+          </div>
+
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-user-doctor"></i></div>
+            <h3 class="card-title">Thiếu Hụt Nhân Lực 35%</h3>
+            <p class="card-text">Ảnh MRI tăng 12%/năm, nhưng số bác sĩ thần kinh chỉ tăng dưới 2%/năm. Tồn đọng kết quả lâm sàng.</p>
+            <span class="citation-tag">📌 RCR Radiology Census Report (2022)</span>
+          </div>
+
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h3 class="card-title">Ranh Giới U Thâm Nhiễm</h3>
+            <p class="card-text">Khối u brain ác tính có ranh giới vi thể bất định, rất khó phân biệt giữa mô u hoại tử, phù nề và mô brain lành.</p>
+            <span class="citation-tag">📌 Menze et al. (IEEE TMI, 2015)</span>
+          </div>
+        </div>
+
+        <div class="why-box">
+          💡 <strong>TẠI SAO CẦN PHẢI THAY ĐỔI QUY TRÌNH CHẨN ĐOÁN HIỆN TẠI?</strong> Vì việc giải quyết các thách thức trên giúp bác sĩ loại bỏ sai sót cá nhân, tranh thủ "thời gian vàng" để lập phẫu trình mổ/xạ trị, nâng cao trực tiếp cơ hội sống sót cho bệnh nhân.
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Bước 1 (Tiếp): NGUYÊN NHÂN & TÁC ĐỘNG -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-chart-line"></i> Bước 1 (Tiếp): NGUYÊN NHÂN & TÁC ĐỘNG</div>
+          <h2 class="slide-title">Mục Tiêu Hệ Thống & <span>Đánh Giá Tác Động</span></h2>
+        </div>
+
+        <div class="text-box">
+          🎯 <strong>Mức độ tác động tổng thể</strong> = (Thời gian tiết kiệm 43 phút/ca) × (Số lượng bệnh nhân được hỗ trợ) × (Gia tăng độ chính xác phân đoạn)
+        </div>
+
+        <div class="grid-2" style="margin-top: 1rem;">
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
+            <h3 class="card-title">Tác Động Xã Hội (Social Impact)</h3>
+            <p class="card-text">Giảm tải hàng ngàn giờ làm việc cho bệnh viện tuyến đầu. Bình đẳng hóa y tế kỹ thuật cao cho bệnh viện tuyến dưới và vùng sâu vùng xa.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h3 class="card-title">Tác Động Cá Nhân (Individual Impact)</h3>
+            <p class="card-text">Giảm áp lực burnout cho bác sĩ (tăng hiệu suất 15 - 20 lần). Rút ngắn thời gian chờ nhận kết quả, nâng cao cơ hội sống cho bệnh nhân.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: Bước 2: KHÁM PHÁ (DISCOVER) — CRISP-DM: Tìm Hiểu Dữ Liệu -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-magnifying-glass"></i> Bước 2: KHÁM PHÁ (DISCOVER) — CRISP-DM: Tìm Hiểu Dữ Liệu</div>
+          <h2 class="slide-title">Khảo Sát Bộ Dữ Liệu <span>BraTS 2023 GLI</span></h2>
+        </div>
+
+        <div class="grid-4" style="margin-bottom: 0.8rem;">
+          <div class="stat-box">
+            <div class="stat-number">1,251</div>
+            <div class="stat-label">Tổng Ca Bệnh 3D MRI</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">1,063</div>
+            <div class="stat-label">Tập Huấn Luyện (Train)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">188</div>
+            <div class="stat-label">Tập Kiểm Thử (Val)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">4</div>
+            <div class="stat-label">MRI Modalities / Case</div>
+          </div>
+        </div>
+
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Chuỗi Xung MRI</th>
+              <th>Tên Đầy Đủ</th>
+              <th>Đặc Điểm Y Khoa Chẩn Đoán</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>T1n</strong></td>
+              <td>T1-native</td>
+              <td>Hiển thị cấu trúc giải phẫu học brain nền tảng.</td>
+            </tr>
+            <tr>
+              <td><strong>T1c</strong></td>
+              <td>T1-contrast</td>
+              <td>Tiêm thuốc tương phản từ, làm nổi bật vùng u ác tính đang phát triển (ET).</td>
+            </tr>
+            <tr>
+              <td><strong>T2w</strong></td>
+              <td>T2-weighted</td>
+              <td>Nhạy cảm với dịch và tổn thương mô brain.</td>
+            </tr>
+            <tr>
+              <td><strong>T2f</strong></td>
+              <td>T2-FLAIR</td>
+              <td>Xóa dịch brain tủy, giúp hiển thị cực rõ vùng mô bị phù nề (ED).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="why-box" style="margin-top: 0.8rem;">
+          💡 <strong>Nguồn Gốc Dữ Liệu:</strong> Bộ dữ liệu thuộc Cuộc thi Quốc tế <strong>MICCAI BraTS 2023 Challenge</strong>, tài trợ bởi <strong>ASNR</strong> (Hiệp hội Chẩn đoán Hình ảnh Thần kinh Hoa Kỳ) & <strong>NCI/NIH</strong> (Viện Ung thư Quốc gia Mỹ), dán nhãn bởi các chuyên gia thần kinh hàng đầu.
+        </div>
+      </section>
+
+      <!-- SLIDE 5: Bước 3: PHÂN TÍCH (ANALYZE) — Persona & Ground Truth -->
+      <section class="slide" id="slide-5">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-users-viewfinder"></i> Bước 3: PHÂN TÍCH (ANALYZE) — Đối Tượng Đại Diện & Nhãn</div>
+          <h2 class="slide-title">Persona Bác Sĩ & <span>3 Vùng Khối U</span></h2>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title">4 Nhãn Phân Đoạn (Labels)</h3>
+            <ul style="color: var(--text-muted); line-height: 1.8; padding-left: 1.25rem;">
+              <li><strong style="color: #94a3b8;">Label 0:</strong> Background (Vùng brain lành/nền)</li>
+              <li><strong style="color: #ef4444;">Label 1:</strong> NCR/NET (Lõi u hoại tử)</li>
+              <li><strong style="color: #3b82f6;">Label 2:</strong> ED (Vùng u bị phù nề)</li>
+              <li><strong style="color: #10b981;">Label 3:</strong> ET (Vùng u tăng cường tín hiệu)</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">3 Vùng Khối U Đánh Giá Y Khoa (BraTS)</h3>
+            <div class="text-box" style="font-size: 0.9rem; margin-top: 0;">
+              • <strong>WT (Whole Tumor - Toàn bộ u):</strong> Label 1 + 2 + 3<br>
+              • <strong>TC (Tumor Core - Lõi u):</strong> Label 1 + 3<br>
+              • <strong>ET (Enhancing Tumor - U tăng cường):</strong> Label 3
+            </div>
+            <p class="card-text" style="font-size: 0.85rem; color: var(--text-dim);">Dự án áp dụng Remap Label: {0:0, 1:1, 2:2, 3:3, 4:3} chuẩn hóa định dạng BraTS 2023.</p>
+          </div>
+        </div>
+
+        <div class="why-box">
+          💡 <strong>TẠI SAO PHẢI GỘP THÀNH 3 VÙNG WT, TC, ET?</strong> Vì trong y học phẫu thuật u brain, bác sĩ cần tính thể tích u toàn phần (WT) để đánh giá quy mô, và lõi u (TC/ET) để quyết định phạm vi mổ bóc tách u mà không xâm lấn mô brain lành.
+        </div>
+      </section>
+
+      <!-- SLIDE 6: Bước 4: XÂY DỰNG Ý TƯỞNG (DEVELOP) — CRISP-DM: Chuẩn Bị Dữ Liệu -->
+      <section class="slide" id="slide-6">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-lightbulb"></i> Bước 4: XÂY DỰNG Ý TƯỞNG — CRISP-DM: Chuẩn Bị Dữ Liệu</div>
+          <h2 class="slide-title">Pipeline Dữ Liệu <span>NPZ Drive Cache</span></h2>
+        </div>
+
+        <div class="grid-2">
+          <div class="card" style="border-color: #ef4444;">
+            <h3 class="card-title" style="color: #f87171;"><i class="fa-solid fa-triangle-exclamation"></i> Vấn Đề: Đọc `.nii.gz` Thô (Bị Nghẽn)</h3>
+            <p class="card-text">Mỗi ca bệnh phải giải nén Gzip 5 file đơn luồng CPU. Tự động ép kiểu `float64` tốn ~300MB RAM/case. Thời gian đọc bị nghẽn: <strong>~5.0 giây/case</strong>.</p>
+          </div>
+
+          <div class="card" style="border-color: #10b981;">
+            <h3 class="card-title" style="color: #34d399;"><i class="fa-solid fa-circle-check"></i> Giải Pháp: Đọc `.npz` Cache Drive (Siêu Tốc)</h3>
+            <p class="card-text">Pre-convert 1 lần 1,251 cases sang mảng `.npz` nén `float32`/`uint8` (15.63 GB trên Drive). Thời gian đọc chỉ còn: <strong>~0.003 giây/case (nhanh gấp ~1000x)</strong>!</p>
+          </div>
+        </div>
+
+        <div class="why-box">
+          💡 <strong>TẠI SAO LỰA CHỌN NPZ STORE TRÊN GOOGLE DRIVE?</strong> Định dạng `.npz` nén giúp giảm dung lượng ghi đĩa, bỏ qua khâu giải nén CPU Gzip khi train, và lưu vĩnh viễn trên Drive giúp Colab nạp dữ liệu tức thì ở mọi phiên làm việc mà không cần giải nén lại.
+        </div>
+      </section>
+
+      <!-- SLIDE 7: Bước 4 (Tiếp): MÔ HÌNH HÓA (MODELING) — General 3D U-Net Overview -->
+      <section class="slide" id="slide-7">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-network-wired"></i> Bước 4 (Tiếp): MÔ HÌNH HÓA (MODELING) — Giải Pháp AI</div>
+          <h2 class="slide-title">Kiến Trúc Mô Hình <span>3D U-Net (MONAI)</span></h2>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-cubes"></i></div>
+            <h3 class="card-title">Mô Hình 3D U-Net</h3>
+            <p class="card-text">Mạng nơ-ron học sâu dạng U-Shape chuyên dụng cho ảnh 3D y tế. Tự động học đặc trưng hình thái u và khôi phục độ phân giải giải phẫu gốc.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-border-all"></i></div>
+            <h3 class="card-title">Suy Luận 3D Sliding Window</h3>
+            <p class="card-text">Cơ chế trượt cửa sổ không gian 3D xử lý từng vùng nhỏ rồi kết hợp mượt mà, giúp dự đoán ảnh 3D kích thước lớn mà không tràn bộ nhớ GPU.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-filter"></i></div>
+            <h3 class="card-title">Hậu Xử Lý & Khử Nhiễu</h3>
+            <p class="card-text">Lọc nhiễu tín hiệu giả và làm mịn ranh giới phân đoạn bằng thuật toán hình thái học và phân tích vùng liên thông.</p>
+          </div>
+        </div>
+
+        <div class="why-box">
+          💡 <strong>TẠI SAO CHỌN 3D U-NET & SLIDING WINDOW?</strong> 3D U-Net học liên tục cấu trúc giải phẫu 3D hiệu quả hơn 2D. Kết hợp cơ chế trượt cửa sổ giúp duy trì độ phân giải cao của ảnh MRI mà vẫn đảm bảo tính ổn định tối đa cho phần cứng.
+        </div>
+      </section>
+
+      <!-- SLIDE 8: Bước 4 (Tiếp): THIẾT KẾ MẪU (PROTOTYPE) — Streamlit & PDF Report -->
+      <section class="slide" id="slide-8">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-laptop-code"></i> Bước 4 (Tiếp): THIẾT KẾ MẪU (PROTOTYPE) — Web & Report</div>
+          <h2 class="slide-title">Streamlit UI & <span>Báo Cáo PDF</span></h2>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-display"></i> Giao Diện Streamlit App (`app/streamlit_app.py`)</h3>
+            <ul style="color: var(--text-muted); line-height: 1.8; padding-left: 1.25rem;">
+              <li>Sidebar upload 4 file NIfTI / chọn case mẫu.</li>
+              <li>Slider kéo xem 3D Slices theo 3 trục (Axial, Coronal, Sagittal).</li>
+              <li>Hiển thị bảng chỉ số (Dice, IoU, HD95) và thể tích khối u (cm³).</li>
+              <li>Nút bấm xuất báo cáo chẩn đoán tức thì.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-file-pdf"></i> Module Báo Cáo PDF (`src/reports/generator.py`)</h3>
+            <ul style="color: var(--text-muted); line-height: 1.8; padding-left: 1.25rem;">
+              <li>Sử dụng thư viện `fpdf2` tạo PDF chuyên nghiệp.</li>
+              <li>Bao gồm Thông tin bệnh nhân & Mã ca bệnh.</li>
+              <li>Bảng thống kê thể tích khối u (cm³) & chỉ số Dice.</li>
+              <li>Nhúng hình ảnh 3 mặt cắt MRI tiêu biểu.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: Bước 5: THỬ NGHIỆM & ĐÁNH GIÁ (TEST & EVALUATION) -->
+      <section class="slide" id="slide-9">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-vial"></i> Bước 5: THỬ NGHIỆM (TEST) — Tiêu Chí Chức Năng & Cảm Xúc</div>
+          <h2 class="slide-title">Đánh Giá Tiêu Chí <span>Chuẩn SIC</span></h2>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-gear"></i> Tiêu Chí Chức Năng (Function)</h3>
+            <ul style="color: var(--text-muted); line-height: 1.8; padding-left: 1.25rem;">
+              <li><strong>Tốc độ nạp dữ liệu:</strong> Dưới 0.01 giây/case nhờ cache `.npz` trên Drive.</li>
+              <li><strong>Thời gian suy luận:</strong> Dưới 2 phút/case trên GPU Colab T4.</li>
+              <li><strong>Độ chính xác:</strong> Validation Dice Score trên 0.80 trên các vùng u.</li>
+              <li><strong>Tính thể tích:</strong> Quy đổi voxel sang cm³ chính xác.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-heart"></i> Tiêu Chí Trải Nghiệm & Cảm Xúc</h3>
+            <ul style="color: var(--text-muted); line-height: 1.8; padding-left: 1.25rem;">
+              <li>Giao diện Web đơn giản, dễ thao tác cho bác sĩ.</li>
+              <li>Giảm thiểu căng thẳng và thao tác thủ công phức tạp.</li>
+              <li>Tự động tạo file PDF báo cáo lưu trữ hồ sơ bệnh án.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: TRIỂN KHAI (DEPLOYMENT) & TỔNG KẾT -->
+      <section class="slide title-slide" id="slide-10">
+        <div class="slide-category"><i class="fa-solid fa-flag-checkered"></i> CRISP-DM: TRIỂN KHAI (DEPLOYMENT)</div>
+        <h2 class="slide-title">Sẵn Sàng Cho <span>Nghiệm Thu Dự Án SIC</span></h2>
+        <p class="subtitle">Toàn bộ 1,251 cases đã được pre-convert siêu tốc về Google Drive. Hệ thống sẵn sàng nghiệm thu và vận hành sản phẩm Capstone.</p>
+        
+        <div class="hero-tags" style="margin-top: 1rem;">
+          <span class="badge-tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3); font-size: 1rem; padding: 0.5rem 1.25rem;">
+            <i class="fa-solid fa-circle-check"></i> Cảm Ơn Samsung Innovation Campus & Bác Sĩ Cố Vấn!
+          </span>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Controls -->
+    <footer class="bottom-bar">
+      <div class="progress-bar-container">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="slide-counter" id="slide-counter">Slide 1 / 10</div>
+
+      <div class="nav-controls">
+        <button class="btn-nav" id="btn-prev" title="Slide trước (Phím Mũi tên trái)"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="btn-nav" id="btn-next" title="Slide tiếp (Phím Mũi tên phải/Space)"><i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const progressFill = document.getElementById('progress-fill');
+    const slideCounter = document.getElementById('slide-counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+
+    function updateDeck() {
+      slides.forEach((slide, index) => {
+        slide.classList.remove('active', 'prev');
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else if (index < currentSlide) {
+          slide.classList.add('prev');
+        }
+      });
+
+      const progressPercent = ((currentSlide + 1) / totalSlides) * 100;
+      progressFill.style.width = `${progressPercent}%`;
+      slideCounter.textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateDeck();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateDeck();
+      }
+    }
+
+    btnNext.addEventListener('click', nextSlide);
+    btnPrev.addEventListener('click', prevSlide);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    updateDeck();
+  </script>
+</body>
+</html>

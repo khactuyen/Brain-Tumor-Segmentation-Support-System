@@ -22,12 +22,18 @@ def main():
     parser.add_argument("--epochs", type=int, default=50, help="Number of training epochs")
     parser.add_argument("--batch-size", type=int, default=1, help="Batch size")
     parser.add_argument("--lr", type=float, default=2e-4, help="Learning rate")
-    parser.add_argument("--data-root", type=str, default=None, help="Path to BraTS dataset")
+    parser.add_argument("--data-root", type=str, default=None, help="Path to BraTS dataset or NPZ directory")
     args = parser.parse_args()
 
     # Load Config
     cfg = get_config()
-    data_root = args.data_root or str(cfg.data_root)
+    if args.data_root:
+        data_root = args.data_root
+    elif cfg.processed_npz_dir.exists():
+        data_root = str(cfg.processed_npz_dir)
+        print(f"[*] Auto-detected Fast NPZ Cache Directory: {data_root}")
+    else:
+        data_root = str(cfg.data_root)
 
     print("Initializing Data Splitter...")
     splitter = DataSplitter(data_root=data_root, val_ratio=0.1, test_ratio=0.1)
