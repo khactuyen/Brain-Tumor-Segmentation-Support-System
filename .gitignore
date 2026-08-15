@@ -1,16 +1,46 @@
-Learn_Pandas_basic.ipynb
-pratice_Sklearn.ipynb
-.env/
-.venv/
+# ─── Data & Large Files ──────────────────────────────
 Datasets/
 checkpoints/
 results/
+logs/
 models/*.onnx
 models/*.pt
-*_learning_curves.png
+
+# ─── Python ──────────────────────────────────────────
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ─── Virtual Environments ────────────────────────────
+.env/
+.venv/
+venv/
+
+# ─── IDE & Editor ────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── OS Files ────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Jupyter Notebook Checkpoints ────────────────────
+.ipynb_checkpoints/
+
+# ─── Misc Generated Files ───────────────────────────
+*_learning_curves.png
 .cache/
+*.log
+
+# ─── Project-specific Temp Files ─────────────────────
 context.md
 doc.md
 PHASE_EXECUTION_LOOP_PROTOCOL.md
@@ -18,3 +48,9 @@ PROJECT_PLAN_AND_TASKS.md
 update_notebook.js
 add_cells_to_notebook.py
 do_refactor.bat
+Learn_Pandas_basic.ipynb
+pratice_Sklearn.ipynb
+skills-lock.json
+
+# ─── Claude / AI Assistant ───────────────────────────
+.claude/

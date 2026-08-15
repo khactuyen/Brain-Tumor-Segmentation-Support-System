@@ -1,24 +1,27 @@
 # Default Configuration for Brain Tumor Segmentation Support System
+# Version 2.0.0 — Supports both 3D U-Net and Swin UNETR
 
 project:
   name: "Brain Tumor Segmentation Support System"
-  version: "1.0.0"
+  version: "2.0.0"
 
 paths:
   data_root: "Datasets/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData"
   checkpoints_dir: "checkpoints"
   results_dir: "results"
   logs_dir: "logs"
+  # Optional: path to MONAI SSL pretrained Swin Transformer weights
+  swin_pretrained_weights: ""
 
 data:
   modalities: ["t1n", "t1c", "t2w", "t2f"]
   in_channels: 4
-  num_classes: 4  # 0: background, 1: NCR/NET, 2: ED, 3: ET
-  target_shape: [240, 240, 160]
+  num_classes: 4         # 0: Background, 1: NCR/NET, 2: ED, 3: ET
+  target_shape: [240, 240, 155]
   spatial_patch_size: [128, 128, 128]
   normalize_method: "z_score"
-  val_ratio: 0.1
-  test_ratio: 0.1
+  val_ratio: 0.15
+  test_ratio: 0.10
   seed: 42
 
 models:
@@ -30,24 +33,26 @@ models:
     strides: [2, 2, 2, 2]
     num_res_units: 2
     dropout: 0.2
-    checkpoint: "checkpoints/unet_brats_best.pth"
+    checkpoint: "checkpoints/unet3d_brats_best.pth"
 
   swin_unetr:
-    img_size: [128, 128, 128]
     in_channels: 4
     out_channels: 4
     feature_size: 48
     use_checkpoint: true
+    use_v2: false
+    deep_supervision: false
     checkpoint: "checkpoints/swin_unetr_brats_best.pth"
 
 training:
-  batch_size: 2
+  batch_size: 1          # Use 1 for Swin UNETR, 2 for U-Net
   num_workers: 2
+  steps_per_epoch: 150   # Limit for fast experimentation (0=unlimited)
   learning_rate: 0.0002
   weight_decay: 0.0001
   max_epochs: 100
   val_interval: 2
-  use_amp: true  # Automatic Mixed Precision
+  use_amp: true
   loss: "dice_ce"
 
 inference:
@@ -59,3 +64,22 @@ inference:
     remove_small_objects: true
     min_size: 64
     fill_holes: true
+
+# Comparison experiment settings
+comparison:
+  models:
+    - name: "unet3d"
+      model_name: "unet3d_brats"
+      in_channels: 4
+      out_channels: 4
+    - name: "swin_unetr"
+      model_name: "swin_unetr_brats"
+      in_channels: 4
+      out_channels: 4
+      feature_size: 48
+      use_checkpoint: true
+  max_epochs: 30
+  steps_per_epoch: 150
+  learning_rate: 0.0002
+  val_interval: 2
+  swin_warmup_epochs: 10
