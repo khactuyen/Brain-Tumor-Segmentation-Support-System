@@ -1,14 +1,32 @@
-# Brain Tumor Segmentation — Training Dependencies (Colab/Local)
+# Brain Tumor Segmentation — Dependencies
+# Install: pip install -r requirements.txt
+
+# Core Deep Learning
 torch>=2.0.0
 torchvision>=0.15.0
+
+# Medical Imaging Framework
 monai>=1.2.0
+
+# NIfTI / Medical Image I/O
 nibabel>=5.0.0
+
+# Scientific Computing
 numpy>=1.24.0
 scipy>=1.10.0
+
+# Visualization
 matplotlib>=3.7.0
+
+# Data Processing
 pandas>=2.0.0
 scikit-learn>=1.2.0
+
+# Progress Bars
 tqdm>=4.65.0
 
-# ONNX export/verify (cài trên Colab sau khi train)
+# Config Management
+pyyaml>=6.0
+
+# ONNX export/verify (install separately after training)
 # onnxruntime-gpu>=1.18.0

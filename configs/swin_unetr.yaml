@@ -1,0 +1,88 @@
+# Swin UNETR Configuration for Brain Tumor Segmentation
+# This config is optimized for the Swin UNETR transformer architecture.
+
+project:
+  name: "Brain Tumor Segmentation Support System"
+  version: "2.0.0"
+  experiment: "swin_unetr_brats2023"
+
+paths:
+  data_root: "Datasets/brats2023-gli-dataset/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData"
+  checkpoints_dir: "checkpoints"
+  results_dir: "results"
+  logs_dir: "logs"
+  # Optional: path to MONAI SSL pretrained Swin Transformer weights
+  # Download from: https://github.com/Project-MONAI/MONAI-extra-test-data/releases/download/0.8.1/model_swinvit.pt
+  swin_pretrained_weights: ""
+
+data:
+  modalities: ["t1n", "t1c", "t2w", "t2f"]
+  in_channels: 4
+  num_classes: 4         # 0: Background, 1: NCR/NET, 2: ED, 3: ET
+  target_shape: [240, 240, 155]
+  spatial_patch_size: [128, 128, 128]
+  normalize_method: "z_score"
+  val_ratio: 0.15
+  val_subset_size: 10    # Fast validation subset (10 cases ~ 5-10s per val)
+  test_ratio: 0.10
+  seed: 42
+  num_samples: 2         # Patches per volume (RandCropByPosNegLabeld)
+
+model:
+  name: "swin_unetr"
+  img_size: [128, 128, 128]
+  in_channels: 4
+  out_channels: 4
+  feature_size: 48       # Must match pretrained weights dimension
+  use_checkpoint: true   # Gradient checkpointing (saves ~30% VRAM)
+  spatial_dims: 3
+  drop_rate: 0.0
+  attn_drop_rate: 0.0
+  dropout_path_rate: 0.0
+  use_v2: false          # Set true for SwinUNETRv2 (improved decoder)
+  deep_supervision: false
+
+training:
+  batch_size: 1          # Swin UNETR needs batch=1 on 16GB VRAM
+  num_workers: 2
+  steps_per_epoch: 150   # Limit steps for fast Colab training (~30-45s/epoch)
+  learning_rate: 0.0001  # Lower LR recommended for transformer (1e-4 from paper)
+  weight_decay: 0.00001  # Lower weight decay for transformers (1e-5)
+  max_epochs: 300        # Full training (use 30-50 for quick experiments)
+  val_interval: 2
+  use_amp: true
+  loss: "dice_ce"
+  warmup_epochs: 10      # Cosine annealing warm-up epochs
+  use_differential_lr: false  # Lower LR for encoder, higher for decoder
+
+inference:
+  sw_roi_size: [128, 128, 128]
+  sw_batch_size: 4
+  overlap: 0.5
+  mode: "gaussian"
+  post_processing:
+    remove_small_objects: true
+    min_size: 64
+    fill_holes: true
+
+# Comparison experiment: trains both models on the same pipeline
+comparison:
+  models:
+    - name: "unet3d"
+      model_name: "unet3d_brats"
+      in_channels: 4
+      out_channels: 4
+      channels: [16, 32, 64, 128, 256]
+      strides: [2, 2, 2, 2]
+      num_res_units: 2
+      dropout: 0.2
+    - name: "swin_unetr"
+      model_name: "swin_unetr_brats"
+      in_channels: 4
+      out_channels: 4
+      feature_size: 48
+      use_checkpoint: true
+  max_epochs: 30
+  steps_per_epoch: 150
+  learning_rate: 0.0002
+  val_interval: 2
