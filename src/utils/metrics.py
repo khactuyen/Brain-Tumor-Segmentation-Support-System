@@ -14,19 +14,53 @@ def dice_score(
     target: Union[np.ndarray, torch.Tensor],
     smooth: float = 1e-5,
 ) -> float:
-    """Calculate Dice coefficient."""
-    if isinstance(pred, torch.Tensor):
-        pred = pred.cpu().numpy()
-    if isinstance(target, torch.Tensor):
-        target = target.cpu().numpy()
+    """
+    Calculate mean multi-class Dice coefficient (bỏ qua lớp background=0).
 
-    pred = pred.astype(bool).flatten()
-    target = target.astype(bool).flatten()
+    [FIX] Đây là bản hợp nhất của 2 định nghĩa dice_score trùng tên từng có
+    trong file này (bản đầu chỉ so binary, bản vá phía dưới xử lý multi-class
+    đúng nhưng bị định nghĩa lại đè lên bản đầu — rất dễ gây nhầm lẫn khi đọc
+    code / khi merge). Giữ lại đúng 1 bản.
 
-    intersection = np.sum(pred * target)
-    dice = (2 * intersection + smooth) / (np.sum(pred) + np.sum(target) + smooth)
+    [FIX 2 - phát hiện qua chạy thử thực tế] Bản trước dùng "đoán hình dạng"
+    (pred.shape != target.shape) để quyết định có cần argmax pred hay không.
+    Cách đoán này SAI khi pred đã được argmax sẵn từ trước (shape (B,D,H,W))
+    còn target vẫn còn chiều kênh đơn (B,1,D,H,W) — 2 shape này khác nhau dù
+    không hề cần argmax thêm, khiến hàm argmax nhầm lên chiều spatial đầu
+    tiên, làm sai lệch hoàn toàn kết quả Dice. Giờ xử lý tường minh theo số
+    chiều (ndim) thay vì đoán qua shape:
+      1) Nếu target có chiều kênh đơn (C=1) -> bỏ chiều đó đi trước
+      2) Nếu pred VẪN còn nhiều chiều hơn target (còn kênh multi-class,
+         tức là logits/probs chưa argmax) -> argmax theo đúng chiều kênh
+    """
+    if torch.is_tensor(pred):
+        pred = pred.detach().cpu().numpy()
+    if torch.is_tensor(target):
+        target = target.detach().cpu().numpy()
 
-    return float(dice)
+    # Bước 1: chuẩn hóa target về dạng nhãn lớp phẳng (bỏ chiều kênh đơn C=1)
+    if target.ndim >= 2 and target.shape[1] == 1:
+        target = target[:, 0, ...]
+
+    # Bước 2: nếu pred còn nhiều chiều hơn target sau khi chuẩn hóa,
+    # tức pred vẫn ở dạng logits/probs multi-class (B,C,...) -> argmax kênh
+    if pred.ndim == target.ndim + 1:
+        pred = np.argmax(pred, axis=1)
+
+    p, t = pred.flatten(), target.flatten()
+    classes = np.unique(t)
+    classes = classes[classes > 0]  # bỏ background
+
+    if len(classes) == 0:
+        return 1.0 if np.sum(p) == 0 else 0.0
+
+    dices = []
+    for c in classes:
+        intersection = np.sum((p == c) & (t == c))
+        union = np.sum(p == c) + np.sum(t == c)
+        dices.append((2.0 * intersection + smooth) / (union + smooth))
+
+    return float(np.mean(dices))
 
 
 def iou_score(
