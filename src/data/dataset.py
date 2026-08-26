@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import List, Tuple, Optional, Dict, Union
 import json
 
+from monai.data import list_data_collate
+
 from .data_loader import BraTSDataLoader
 from .preprocessor import MRIPreprocessor
 
@@ -278,6 +280,10 @@ def create_dataloaders(
             shuffle=(split_name == "train"),
             num_workers=num_workers,
             pin_memory=torch.cuda.is_available(),
+            # [MỚI] RandCropByPosNegLabeld (dùng khi có transforms) trả về
+            # nhiều patch cho mỗi volume -> cần list_data_collate của MONAI
+            # để gộp đúng thành batch, thay vì default_collate sẽ lỗi.
+            collate_fn=list_data_collate if trans is not None else None,
         )
 
         dataloaders[f"{split_name}_loader"] = dataloader
