@@ -48,12 +48,16 @@ class PreprocessedBraTSDataset(Dataset):
         if not npz_path.exists():
             raise FileNotFoundError(f"NPZ file not found: {npz_path}")
 
-        with np.load(npz_path) as data:
+        with np.load(npz_path, allow_pickle=True) as data:
             image_np = data["image"].astype(np.float32)  # (4, H, W, D)
+            if image_np.ndim == 3:
+                image_np = np.expand_dims(image_np, axis=0)
             if "label" in data:
                 label_np = data["label"].astype(np.int64)
             elif "seg" in data:
                 label_np = data["seg"].astype(np.int64)
+            elif "mask" in data:
+                label_np = data["mask"].astype(np.int64)
             else:
                 label_np = np.zeros((1,) + image_np.shape[1:], dtype=np.int64)
 
@@ -115,9 +119,19 @@ class BraTSDataset(Dataset):
         # Fast NPZ path if available
         if self.data_loader.cache_dir and (self.data_loader.cache_dir / f"{case_id}.npz").exists():
             npz_path = self.data_loader.cache_dir / f"{case_id}.npz"
-            with np.load(npz_path) as data:
+            with np.load(npz_path, allow_pickle=True) as data:
                 image_np = data["image"].astype(np.float32)
-                label_np = data["label"].astype(np.int64) if "label" in data else data.get("seg", None)
+                if image_np.ndim == 3:
+                    image_np = np.expand_dims(image_np, axis=0)
+                if "label" in data:
+                    label_np = data["label"].astype(np.int64)
+                elif "seg" in data:
+                    label_np = data["seg"].astype(np.int64)
+                elif "mask" in data:
+                    label_np = data["mask"].astype(np.int64)
+                else:
+                    label_np = None
+
                 if label_np is not None and label_np.ndim == 3:
                     label_np = np.expand_dims(label_np, axis=0)
 

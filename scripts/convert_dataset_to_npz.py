@@ -58,6 +58,7 @@ def main():
     parser.add_argument("--output-dir", type=str, default=None, help="Path to output NPZ directory")
     parser.add_argument("--num-workers", type=int, default=4, help="Number of CPU worker processes")
     parser.add_argument("--drive-dir", type=str, default=None, help="Optional Google Drive path to mirror NPZ files")
+    parser.add_argument("--force", action="store_true", help="Force re-conversion of all cases even if NPZ exists")
     args = parser.parse_args()
 
     cfg = get_config()
@@ -87,21 +88,33 @@ def main():
     loader = BraTSDataLoader(str(data_root))
     cases = loader.list_cases()
     case_ids = [c.name for c in cases]
-    print(f"Found {len(case_ids)} cases to convert.\n")
+    print(f"Found {len(case_ids)} cases in raw dataset.\n")
 
     if len(case_ids) == 0:
         print("[!] No cases found in raw data root.")
         sys.exit(0)
 
+    # Filter out already converted cases unless --force
+    if not args.force:
+        already_done = [c for c in case_ids if (output_dir / f"{c}.npz").exists() and (output_dir / f"{c}.npz").stat().st_size > 0]
+        cases_to_convert = [c for c in case_ids if not ((output_dir / f"{c}.npz").exists() and (output_dir / f"{c}.npz").stat().st_size > 0)]
+        print(f"[*] Already converted cases: {len(already_done)}")
+        print(f"[*] Cases remaining to convert: {len(cases_to_convert)}")
+        if len(cases_to_convert) == 0:
+            print("[✓] All cases are already converted into NPZ format! Nothing to do. (Use --force to re-convert)")
+            sys.exit(0)
+    else:
+        cases_to_convert = case_ids
+
     # 4. Prepare worker arguments
-    tasks = [(case_id, str(data_root), str(output_dir)) for case_id in case_ids]
+    tasks = [(case_id, str(data_root), str(output_dir)) for case_id in cases_to_convert]
 
     start_time = time.time()
     success_count = 0
     total_size_mb = 0.0
 
     # 5. Parallel conversion loop
-    print("Starting parallel conversion...")
+    print(f"Starting parallel conversion for {len(cases_to_convert)} cases...")
     with ProcessPoolExecutor(max_workers=args.num_workers) as executor:
         futures = [executor.submit(process_single_case, task) for task in tasks]
 
@@ -110,9 +123,9 @@ def main():
             if status == "SUCCESS":
                 success_count += 1
                 total_size_mb += size_mb
-                print(f"[{idx:03d}/{len(case_ids):03d}] {case_id}: Done ({elapsed:.2f}s, {size_mb:.1f} MB)")
+                print(f"[{idx:03d}/{len(cases_to_convert):03d}] {case_id}: Done ({elapsed:.2f}s, {size_mb:.1f} MB)")
             else:
-                print(f"[{idx:03d}/{len(case_ids):03d}] {case_id}: {status}")
+                print(f"[{idx:03d}/{len(cases_to_convert):03d}] {case_id}: {status}")
 
     total_elapsed = time.time() - start_time
     print(f"\n==================================================")

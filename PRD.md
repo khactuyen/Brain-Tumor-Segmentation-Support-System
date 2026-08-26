@@ -8,8 +8,7 @@
 ## 2. Mục tiêu sản phẩm & Phương pháp Tư duy Thiết kế (Design Thinking)
 
 ### 2.1 Mục tiêu sản phẩm
-- **Phân đoạn tự động khối u não 3D bằng 3D U-Net**: Hỗ trợ bác sĩ và nhà nghiên cứu phân đoạn tự động các vùng khối u (WT - Whole Tumor, TC - Tumor Core, ET - Enhancing Tumor) từ 4 chuỗi ảnh MRI (T1, T1ce, T2, FLAIR) bằng kiến trúc mạng **3D U-Net** (MONAI Framework).
-- **Tối ưu hóa Pipeline Dữ liệu Siêu Tốc (Fast NPZ Cache Pipeline)**: Chuyển đổi dữ liệu thô `.nii.gz` thành định dạng `.npz` nén chuẩn `float32`/`uint8` lưu vĩnh viễn trên **Google Drive**, giảm thời gian nạp từ 5 giây xuống **~0.003 giây/case (tăng tốc ~1000 lần)**.
+- **Phân đoạn tự động khối u não**: Hỗ trợ bác sĩ và nhà nghiên cứu phân đoạn tự động các vùng khối u (WT - Whole Tumor, TC - Tumor Core, ET - Enhancing Tumor) từ 4 chuỗi ảnh MRI (T1, T1ce, T2, FLAIR).
 - **Trực quan hóa & Thống kê Y khoa**: Hiển thị lát cắt 3 trục (Axial, Coronal, Sagittal) với mask màu đa lớp (color overlay), tính toán thể tích khối u (cm³) và các chỉ số chẩn đoán (Dice, IoU, Precision, Recall, HD95).
 - **Báo cáo Chẩn đoán Tự động**: Xuất báo cáo y khoa chuyên nghiệp định dạng **PDF** và **HTML** cho từng trường hợp chẩn đoán.
 
@@ -19,7 +18,7 @@
 
 #### 1. Vấn đề cụ thể cần giải quyết là gì? (Dẫn chứng Thực tế & Trích nguồn)
 - **Tốn thời gian & Biến thiên giữa các bác sĩ**: Theo nghiên cứu chuẩn benchmark BraTS của *Menze et al. (IEEE TMI, 2015)* và *Bakas et al. (Nature Scientific Data, 2017)*, việc khoanh vùng thủ công 3D trên 4 chuỗi xung MRI (T1, T1ce, T2, FLAIR) tốn từ **30 – 60 phút mỗi ca bệnh**, với độ biến thiên kết quả giữa các bác sĩ chẩn đoán hình ảnh (inter-observer variability) dao động tới **15% – 28%** tùy thuộc vào kinh nghiệm và sự mệt mỏi.
-- **Mức độ nguy hiểm cao của Glioma**: Theo *Báo cáo Thống kê CBTRUS (Neuro-Oncology, 2022)*, U nguyên bào đệm (Glioblastoma - GBM, Grade IV Glioma) chiếm **49.1% các ca u脑 ác tính nguyên phát**, với tỷ lệ sống sót sau 5 năm cực kỳ thấp (**dưới 6.8%**). Việc chẩn đoán và xác định thể tích u chính xác có ý nghĩa sinh tử đối với bệnh nhân.
+- **Mức độ nguy hiểm cao của Glioma**: Theo *Báo cáo Thống kê CBTRUS (Neuro-Oncology, 2022)*, U nguyên bào đệm (Glioblastoma - GBM, Grade IV Glioma) chiếm **49.1% các ca u ác tính nguyên phát**, với tỷ lệ sống sót sau 5 năm cực kỳ thấp (**dưới 6.8%**). Việc chẩn đoán và xác định thể tích u chính xác có ý nghĩa sinh tử đối với bệnh nhân.
 
 #### 2. Tại sao bạn gặp phải vấn đề này? Và tại sao bạn muốn giải quyết vấn đề đó?
 - **Quá tải và thiếu hụt nhân lực y tế**: Theo *Báo cáo Khảo sát Nhân lực Chẩn đoán Hình ảnh Lâm sàng RCR (2022)*, khối lượng ảnh chụp MRI tăng trung bình 8% – 12%/năm, trong khi số lượng bác sĩ chuyên khoa chẩn đoán hình ảnh thần kinh chỉ tăng dưới 2%/năm. Tỷ lệ thiếu hụt nhân lực chuyên khoa đạt mức **29% - 35%**, dẫn đến tình trạng tồn đọng kết quả chẩn đoán.
@@ -85,22 +84,16 @@ Mức độ tác động tổng thể được xác định dựa trên:
 
 ## 6. Tính năng chính (Features & MVP)
 
-1. **Dataset Engine & Pre-converter**:
-   - Tự động nạp dữ liệu siêu tốc từ Google Drive `.npz` hoặc NIfTI `.nii.gz`.
-   - Z-score normalization theo từng vùng brain mask và Remap label chuẩn BraTS 2023.
-2. **3D U-Net Model Inference Engine**:
-   - Kiến trúc **3D U-Net** chuyên dụng với kỹ thuật **Sliding Window Inference 3D** (patch size 128 x 128 x 128, overlap 0.5) giúp suy luận volume MRI 3D lớn mà không tràn RAM/VRAM.
-   - Hỗ trợ Automatic Mixed Precision (AMP) cho GPU.
-3. **Post-processing Filter**:
+1. **Post-processing Filter**:
    - Khử nhiễu hình thái học (Morphological Operations) và lọc thành phần liên thông nhỏ (Connected Component Analysis).
-4. **3D Multi-planar Visualizer**:
+2. **3D Multi-planar Visualizer**:
    - Cho phép kéo thanh trượt Slider xem lát cắt theo 3 mặt phẳng (Axial, Coronal, Sagittal) với mask color overlay rõ nét.
-5. **Medical Metrics & Volume Calculation**:
+3. **Medical Metrics & Volume Calculation**:
    - Tính chỉ số Dice, IoU, Precision, Recall, HD95 theo từng phân vùng u (WT, TC, ET).
    - Quy đổi số lượng voxel sang thể tích thực tế (cm³).
-6. **Automatic Medical Report Generator**:
+4. **Automatic Medical Report Generator**:
    - Xuất file báo cáo y khoa dạng **PDF** (thông qua `fpdf2`) và **HTML** responsive.
-7. **Interactive Web App (Streamlit)**:
+5. **Interactive Web App (Streamlit)**:
    - Giao diện người dùng thân thiện: Upload file -> Chạy suy luận 3D U-Net -> Xem 3D Slices -> Đánh giá chỉ số -> Xuất báo cáo.
 
 ---

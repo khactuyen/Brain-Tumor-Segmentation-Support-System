@@ -73,13 +73,22 @@ class BraTSDataLoader:
         if self.cache_dir and self.cache_dir.exists():
             npz_path = self.cache_dir / f"{case_id}.npz"
             if npz_path.exists():
-                with np.load(npz_path) as npz_data:
+                with np.load(npz_path, allow_pickle=True) as npz_data:
                     data = {}
                     image_stack = npz_data["image"]  # shape (4, H, W, D)
+                    if image_stack.ndim == 3:
+                        image_stack = np.expand_dims(image_stack, axis=0)
                     for idx, modality in enumerate(self.MODALITIES):
-                        data[modality] = image_stack[idx]
+                        if idx < image_stack.shape[0]:
+                            data[modality] = image_stack[idx]
+                        else:
+                            data[modality] = np.zeros_like(image_stack[0])
                     if "seg" in npz_data:
                         data[self.SEGMENTATION_SUFFIX] = npz_data["seg"].astype(np.float32)
+                    elif "label" in npz_data:
+                        data[self.SEGMENTATION_SUFFIX] = npz_data["label"].astype(np.float32)
+                    elif "mask" in npz_data:
+                        data[self.SEGMENTATION_SUFFIX] = npz_data["mask"].astype(np.float32)
                     return data
 
         # 2. Direct NIfTI load with parallel thread pool for 4x speedup
@@ -129,13 +138,23 @@ class BraTSDataLoader:
         if self.cache_dir and self.cache_dir.exists():
             npz_path = self.cache_dir / f"{case_id}.npz"
             if npz_path.exists():
-                with np.load(npz_path) as npz_data:
+                with np.load(npz_path, allow_pickle=True) as npz_data:
                     image_array = npz_data["image"].astype(np.float32)
+                    if image_array.ndim == 3:
+                        image_array = np.expand_dims(image_array, axis=0)
                     image_tensor = torch.from_numpy(image_array).to(device)
 
                     seg_tensor = None
                     if "seg" in npz_data:
                         seg_array = npz_data["seg"].astype(np.float32)
+                    elif "label" in npz_data:
+                        seg_array = npz_data["label"].astype(np.float32)
+                    elif "mask" in npz_data:
+                        seg_array = npz_data["mask"].astype(np.float32)
+                    else:
+                        seg_array = None
+
+                    if seg_array is not None:
                         if seg_array.ndim == 3:
                             seg_array = np.expand_dims(seg_array, axis=0)
                         seg_tensor = torch.from_numpy(seg_array).to(device)
@@ -178,7 +197,9 @@ class BraTSDataLoader:
 
         save_dict = {"image": image_stack}
         if self.SEGMENTATION_SUFFIX in data:
-            save_dict["seg"] = data[self.SEGMENTATION_SUFFIX].astype(np.uint8)
+            seg_data = data[self.SEGMENTATION_SUFFIX].astype(np.uint8)
+            save_dict["seg"] = seg_data
+            save_dict["label"] = seg_data
 
         np.savez_compressed(target_npz, **save_dict)
         return target_npz
