@@ -1,0 +1,1 @@
+tuyệt đối k được sửa code nếu không có sự cho phép của tôi , riêng notebook train không được sửa và train lại nếu không có sự cho phép
