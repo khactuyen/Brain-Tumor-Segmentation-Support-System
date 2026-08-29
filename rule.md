@@ -1,1 +1,2 @@
-tuyệt đối k được sửa code nếu không có sự cho phép của tôi , riêng notebook train không được sửa và train lại nếu không có sự cho phép
+- tuyệt đối k được sửa code nếu không có sự cho phép của tôi , riêng notebook train không được sửa và train lại nếu không có sự cho phép
+- thứ 2 , mỗi vấn đề tôi đưa cho bạn , và phải tìm hiểu và xác định rõ nguyên nhân , tìm phương pháp phù hợp rồi mới đến bước sữa , k được sử vô tôi vạ 
