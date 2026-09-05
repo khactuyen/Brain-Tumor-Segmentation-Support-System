@@ -10,7 +10,7 @@ from monai.losses import DiceCELoss, DiceLoss, FocalLoss
 
 def get_loss_function(
     loss_name: str = "dice_ce",
-    include_background: bool = True,
+    include_background: bool = False,  # [FIX - Bước 1] Mặc định tắt background
     to_onehot_y: bool = True,
     softmax: bool = True,
     squared_pred: bool = True,
@@ -36,6 +36,10 @@ def get_loss_function(
 
     if name in ["dice_ce", "diceceloss"]:
         return DiceCELoss(
+            # [FIX - Bước 1] include_background=False: background chiếm ~90%
+            # voxels, nếu đưa vào loss nó áp đảo gradient, mô hình thiên về
+            # dự đoán nền thay vì tập trung học biên giới u nhỏ (đặc biệt ET).
+            # Chuẩn nnU-Net và các đội top BraTS đều tắt background loss.
             include_background=include_background,
             to_onehot_y=to_onehot_y,
             softmax=softmax,

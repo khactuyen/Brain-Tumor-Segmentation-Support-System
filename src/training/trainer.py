@@ -34,6 +34,8 @@ class SegmentationTrainer:
         roi_size: tuple = (128, 128, 128),
         sw_batch_size: int = 4,
         sw_overlap: float = 0.5,
+        use_tta: bool = True,
+        et_min_voxels: int = 100,
     ):
         """
         Initialize trainer.
@@ -49,11 +51,14 @@ class SegmentationTrainer:
             use_amp: Whether to use Automatic Mixed Precision
             checkpoints_dir: Directory to save model checkpoints
             model_name: Base name for saved checkpoints
-            roi_size: [MỚI] Kích thước cửa sổ trượt khi validate (mặc định
-                128³, khớp với patch_size dùng lúc train để mô hình luôn
-                thấy input cùng kích thước đã học).
-            sw_batch_size: [MỚI] Số cửa sổ trượt xử lý cùng lúc trên GPU.
-            sw_overlap: [MỚI] Độ chồng lấn giữa các cửa sổ trượt (0-1).
+            roi_size: Kích thước cửa sổ trượt khi validate (mặc định 128³).
+            sw_batch_size: Số cửa sổ trượt xử lý cùng lúc trên GPU.
+            sw_overlap: Độ chồng lấn giữa các cửa sổ trượt (0-1).
+            use_tta: [Bước 4] Bật Test-Time Augmentation (flip 3 trục) khi
+                validate. Tăng +0.01 - 0.015 Dice nhưng chậm hơn 4x.
+                Không dùng khi train (chỉ dùng lúc validate / inference).
+            et_min_voxels: [Bước 3] Ngưỡng voxel tối thiểu của ET. Nếu < ngưỡng
+                này, toàn bộ dự đoán ET bị chuyển về NCR (nhãn 1).
         """
         self.model = model.to(device)
         self.train_loader = train_loader
@@ -66,6 +71,8 @@ class SegmentationTrainer:
         self.roi_size = roi_size
         self.sw_batch_size = sw_batch_size
         self.sw_overlap = sw_overlap
+        self.use_tta = use_tta          # [Bước 4] TTA flag
+        self.et_min_voxels = et_min_voxels  # [Bước 3] ET threshold
 
         # Default Optimizer
         self.optimizer = optimizer or torch.optim.AdamW(
@@ -88,6 +95,66 @@ class SegmentationTrainer:
             "val_loss": [],
             "val_dice": [],
         }
+
+    # ------------------------------------------------------------------
+    # [Bước 4] Test-Time Augmentation (TTA)
+    # ------------------------------------------------------------------
+    def _apply_tta(
+        self, images: torch.Tensor, use_tta: bool = True
+    ) -> torch.Tensor:
+        """
+        [Bước 4] Test-Time Augmentation: lật nhân theo 3 trục không gian
+        (x, y, z), chạy sliding_window_inference trên từng phiên bản, rồi
+        trung bình hóa Softmax-probability trước khi argmax.
+
+        Công thức:
+            P_final = (P(x) + flip_x(P(flip_x(x)))
+                     + flip_y(P(flip_y(x))) + flip_z(P(flip_z(x)))) / 4
+
+        Điều này giúp viền phân đoạn mịn hơn và ổn định hơn, thường tăng
+        +0.01 - 0.015 Dice mà không cần thêm bất kỳ dữ liệu hay thông số nào.
+        """
+        def _infer(x: torch.Tensor) -> torch.Tensor:
+            return sliding_window_inference(
+                inputs=x,
+                roi_size=self.roi_size,
+                sw_batch_size=self.sw_batch_size,
+                predictor=self.model,
+                overlap=self.sw_overlap,
+            )
+
+        probs = torch.softmax(_infer(images), dim=1)
+
+        if use_tta:
+            for axis in [2, 3, 4]:  # spatial axes: D, H, W (tensor shape B,C,D,H,W)
+                flipped = torch.flip(images, dims=[axis])
+                pred_flip = torch.softmax(_infer(flipped), dim=1)
+                probs = probs + torch.flip(pred_flip, dims=[axis])
+            probs = probs / 4.0  # Trung bình 4 phiên bản
+
+        return probs
+
+    # ------------------------------------------------------------------
+    # [Bước 3] Post-processing: Loại ET nhỏ (chống False Positive ET)
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _postprocess_et(
+        preds: torch.Tensor, et_min_voxels: int = 100
+    ) -> torch.Tensor:
+        """
+        [Bước 3] Nếu tổng số voxel của Enhancing Tumor (nhãn 3) < et_min_voxels
+        thì chuyển toàn bộ về nhãn 1 (NCR/NET).
+
+        Lý do: Rất nhiều ca bệnh không có ET (IDH-mutant, u vòng nhỏ). Khi
+        mô hình dự đoán vài chục voxel ET ngẫu nhiên, Dice ET ngay lập tức
+        rơi về 0.0, kéo tụt toàn bộ điểm trung bình. Đây là kỹ thuật
+        "đầu tư" thấp nhất trong BraTS nhưng hiệu quả rất cao.
+        """
+        preds = preds.clone()
+        et_voxels = (preds == 3).sum()
+        if et_voxels < et_min_voxels:
+            preds[preds == 3] = 1  # Chuyển ET nhỏ về NCR
+        return preds
 
     def train_epoch(self, epoch: int) -> float:
         """Run one training epoch."""
@@ -157,37 +224,45 @@ class SegmentationTrainer:
             images = images.to(self.device)
             labels = labels.to(self.device)
 
-            # [FIX] Trước đây center-crop 128³ khi validate — nghĩa là chỉ
-            # đánh giá đúng 1 vùng nhỏ ở giữa ảnh, bỏ sót phần còn lại của
-            # não. Giờ dùng sliding_window_inference (MONAI) giống đồng
-            # nghiệp: quét toàn bộ ảnh gốc bằng cửa sổ 128³ trượt có chồng
-            # lấn, ghép kết quả lại đủ full volume — vừa không tràn VRAM
-            # (mỗi lần chỉ xử lý 1 cửa sổ), vừa đánh giá đúng trên ảnh đầy
-            # đủ như lúc inference thực tế.
+            # Tính loss trên outputs gốc (không TTA) để scheduler hoạt động
+            # đúng và loss curve không bị nhiễu bởi thời gian TTA.
             with torch.cuda.amp.autocast(enabled=self.use_amp):
-                outputs = sliding_window_inference(
+                outputs_raw = sliding_window_inference(
                     inputs=images,
                     roi_size=self.roi_size,
                     sw_batch_size=self.sw_batch_size,
                     predictor=self.model,
                     overlap=self.sw_overlap,
                 )
-                loss = self.loss_fn(outputs, labels)
+                loss = self.loss_fn(outputs_raw, labels)
 
             total_loss += loss.item()
 
-            # [FIX] Trước đây threshold softmax >0.5 theo từng kênh riêng lẻ
-            # rồi mới đưa vào dice_score để argmax lại — sai logic cho bài
-            # toán multi-class loại trừ lẫn nhau. Lấy argmax trực tiếp trên
-            # logits để ra đúng lớp dự đoán cho từng voxel.
-            preds = torch.argmax(outputs, dim=1)
+            # [Bước 4] TTA: Nếu use_tta=True, trung bình hóa xác suất từ
+            # 4 phiên bản lật (gốc + flip_d + flip_h + flip_w) trước argmax.
+            # Nếu use_tta=False, dùng thẳng outputs_raw (nhanh hơn, dùng khi
+            # train nhanh để theo dõi tiến độ).
+            with torch.cuda.amp.autocast(enabled=self.use_amp):
+                probs = self._apply_tta(images, use_tta=self.use_tta)
+
+            preds = torch.argmax(probs, dim=1)
+
+            # [Bước 3] ET Post-processing: loại bỏ cụm ET giả nhỏ hơn
+            # et_min_voxels. Tránh bị phạt Dice ET = 0.0 trên các ca
+            # không có ET thực sự (IDH-mutant, u vòng nhỏ).
+            preds = self._postprocess_et(preds, et_min_voxels=self.et_min_voxels)
+
             val_dice = dice_score(preds, labels)
             dice_scores.append(val_dice)
 
         avg_loss = total_loss / max(1, len(self.val_loader))
         avg_dice = float(sum(dice_scores) / max(1, len(dice_scores)))
 
-        logger.info(f"Epoch [{epoch:03d}] Val Loss: {avg_loss:.4f} | Val Dice: {avg_dice:.4f}")
+        tta_str = "TTA=ON" if self.use_tta else "TTA=OFF"
+        logger.info(
+            f"Epoch [{epoch:03d}] Val Loss: {avg_loss:.4f} | "
+            f"Val Dice: {avg_dice:.4f} [{tta_str}, ET_thresh={self.et_min_voxels}]"
+        )
         return {"val_loss": avg_loss, "val_dice": avg_dice}
 
     def resume_from_checkpoint(self, checkpoint_path: Union[str, Path]) -> int:
