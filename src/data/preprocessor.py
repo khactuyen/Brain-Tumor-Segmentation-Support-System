@@ -61,22 +61,12 @@ class MRIPreprocessor:
     ) -> np.ndarray:
         """Normalize a single channel."""
         if method == "z_score":
-            # [FIX - Bước 1] Non-zero Z-score chuẩn y tế: chỉ tính Mean/Std
-            # trên vùng mô não thật sự (voxel > 0). Ảnh MRI skull-stripped có
-            # ~70-80% thể tích là nền đen (= 0). Tính mean trên toàn ảnh sẽ
-            # bị kéo tụt gần 0 và std bị méo, làm vùng nền từ 0 thành số âm
-            # (~-0.35), gây khó cho mô hình phân biệt "nền rỗng" vs "mô não
-            # tín hiệu thấp". Giữ nguyên nền đen = 0 sau khi chuẩn hóa.
-            brain_mask = image > 0
-            if np.any(brain_mask):
-                mean = image[brain_mask].mean()
-                std = image[brain_mask].std()
-                result = image.copy()
-                result[brain_mask] = (image[brain_mask] - mean) / (std + 1e-8)
-                result[~brain_mask] = 0.0  # Giữ nền đen = 0
-                return result
+            mean = np.mean(image)
+            std = np.std(image)
+            if std > 0:
+                return (image - mean) / std
             else:
-                return image  # Ảnh toàn 0, trả về nguyên
+                return image - mean
 
         elif method == "min_max":
             img_min = np.min(image)
