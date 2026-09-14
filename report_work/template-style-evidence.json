@@ -1,0 +1,72 @@
+{
+  "input": "D:\\SIC_Capstone 2026\\doc\\SIC_AI_Capstone Project_Final Report.docx",
+  "fonts_by_char_count": {
+    "SamsungOne-400": 490,
+    "SamsungOne-700": 74,
+    "Samsung Sharp Sans": 30,
+    "Times New Roman": 1
+  },
+  "direct_run_formatting_runs": 38,
+  "direct_paragraph_formatting_paragraphs": 28,
+  "heading_like_paragraphs_not_heading_style": [],
+  "examples": {
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 1,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 2,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "text": "AI Course",
+        "style": "Normal"
+      },
+      {
+        "para_index": 5,
+        "text": "Capstone Project \nFinal Report",
+        "style": "Normal"
+      }
+    ],
+    "direct_run_formatting": [
+      {
+        "para_index": 4,
+        "run_text": "AI",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "run_text": " ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "run_text": "Course",
+        "style": "Normal"
+      },
+      {
+        "para_index": 5,
+        "run_text": "Capstone Project ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 5,
+        "run_text": "\n",
+        "style": "Normal"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}
