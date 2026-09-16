@@ -18,3 +18,11 @@ PROJECT_PLAN_AND_TASKS.md
 update_notebook.js
 add_cells_to_notebook.py
 do_refactor.bat
+.agents/
+.report_work/
+
+# Chỉ phát hành ba tài liệu chính trong thư mục doc
+doc/*
+!doc/SIC_AI_Capstone Project_Final Report_Brain Tumor Segmentation_Revised.updated.final.docx
+!doc/SIC_AI_Chapter 11. Starting an AI Project.pdf
+!doc/Report_BraTS-GLI-2026_nzd2b1s9.pdf
