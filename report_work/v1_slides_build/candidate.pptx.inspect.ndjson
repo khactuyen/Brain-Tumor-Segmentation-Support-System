@@ -1,0 +1,238 @@
+{"kind":"deck","id":"pr/d5cg2e","name":"Deck"}
+{"kind":"layout","layoutId":"4d766ca0-1986-4d72-9411-981c5e607fd1","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"2a5f2c4b-72b2-4d80-bda2-9dbc2ff76d65","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/yjhnpd","slide":1,"title":"SIC CAPSTONE 2026","textShapes":5}
+{"kind":"shape","id":"sh/9kji5072","slide":1,"bbox":[0,0,460,720]}
+{"kind":"textbox","id":"sh/mhszu5ob","slide":1,"text":"SIC CAPSTONE 2026","textPreview":"SIC CAPSTONE 2026","textChars":17,"textLines":1,"bbox":[70,72,330,28]}
+{"kind":"textbox","id":"sh/ni103qpw","slide":1,"text":"Brain Tumor\nSegmentation","textPreview":"Brain Tumor | Segmentation","textChars":24,"textLines":2,"bbox":[70,150,520,150]}
+{"kind":"textbox","id":"sh/0fqhsvq5","slide":1,"text":"So sánh notebook v1 và v2","textPreview":"So sánh notebook v1 và v2","textChars":25,"textLines":1,"bbox":[72,335,470,55]}
+{"kind":"shape","id":"sh/lgzi107q","slide":1,"bbox":[70,425,220,4]}
+{"kind":"textbox","id":"sh/yd8zql8f","slide":1,"text":"3D U-Net  |  Swin UNETR","textPreview":"3D U-Net  |  Swin UNETR","textChars":23,"textLines":1,"bbox":[72,457,420,28]}
+{"kind":"textbox","id":"sh/crqhobq9","slide":1,"text":"Trình bày dự án","textPreview":"Trình bày dự án","textChars":15,"textLines":1,"bbox":[72,620,300,25]}
+{"kind":"image","id":"im/ytwf2d0j","slide":1,"name":"","alt":"Ví dụ dự đoán segmentation theo ba mặt phẳng","bbox":[535,95,660,500]}
+{"kind":"notes","id":"nt/yjhnpd","slide":1,"text":"Bộ slide trình bày hai notebook: v1 dùng 3D U-Net, v2 dùng Swin UNETR."}
+{"kind":"slide","id":"sl/dvfs34","slide":2,"title":"WHY THIS MATTERS","textShapes":10}
+{"kind":"textbox","id":"sh/cbetojux","slide":2,"text":"WHY THIS MATTERS","textPreview":"WHY THIS MATTERS","textChars":16,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/ra5cfedc","slide":2,"text":"2  Bối cảnh và bài toán","textPreview":"2  Bối cảnh và bài toán","textChars":23,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/q9cbm9cr","slide":2,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/10nulove","slide":2,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/0zetsjut","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/ze5cjydo","slide":2,"text":"Từ ảnh MRI 3D đến mask vùng u có thể kiểm tra được","textPreview":"Từ ảnh MRI 3D đến mask vùng u có thể kiểm tra được","textChars":50,"textLines":1,"bbox":[64,164,720,46]}
+{"kind":"textbox","id":"sh/edwbqtc3","slide":2,"text":"• Phân đoạn thủ công tốn thời gian và phụ thuộc người đọc ảnh.\n• Mỗi ca có bốn modality MRI, mỗi modality bổ sung một tín hiệu mô học.\n• Notebook v1 tạo baseline với 3D U-Net; notebook v2 thử Swin UNETR.","textPreview":"• Phân đoạn thủ công tốn thời gian và phụ thuộc người đọc ảnh. | • Mỗi ca có bốn modality MRI, mỗi modality bổ sung một tín hiệu mô học. ...","textChars":203,"textLines":3,"bbox":[80,240,570,180]}
+{"kind":"shape","id":"sh/h43u94va","slide":2,"bbox":[760,190,440,320]}
+{"kind":"textbox","id":"sh/g3utgzup","slide":2,"text":"INPUT","textPreview":"INPUT","textChars":5,"textLines":1,"bbox":[800,225,150,26]}
+{"kind":"textbox","id":"sh/yd03mh8z","slide":2,"text":"4 modality MRI\nT1  •  T1ce  •  T2  •  T2-FLAIR","textPreview":"4 modality MRI | T1  •  T1ce  •  T2  •  T2-FLAIR","textChars":46,"textLines":2,"bbox":[800,260,330,82]}
+{"kind":"shape","id":"sh/je9kvmp4","slide":2,"bbox":[800,375,320,3]}
+{"kind":"textbox","id":"sh/kf2lorqp","slide":2,"text":"OUTPUT","textPreview":"OUTPUT","textChars":6,"textLines":1,"bbox":[800,400,150,26]}
+{"kind":"textbox","id":"sh/lgb2xc7a","slide":2,"text":"Mask 3D\nWT  •  TC  •  ET","textPreview":"Mask 3D | WT  •  TC  •  ET","textChars":24,"textLines":2,"bbox":[800,435,330,65]}
+{"kind":"notes","id":"nt/dvfs34","slide":2,"text":"Mục tiêu là segmentation voxel-level; hai notebook dùng hai mô hình khác nhau."}
+{"kind":"slide","id":"sl/k20tge","slide":3,"title":"DATA","textShapes":22}
+{"kind":"textbox","id":"sh/d4vm1wna","slide":3,"text":"DATA","textPreview":"DATA","textChars":4,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/qh436hoj","slide":3,"text":"3  Dataset, modality và nhãn","textPreview":"3  Dataset, modality và nhãn","textChars":28,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/rid4zm54","slide":3,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/4fml476t","slide":3,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/pgvmxcny","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/2dk32hon","slide":3,"text":"1.251 ca BraTS, chuẩn hóa về một schema 3D","textPreview":"1.251 ca BraTS, chuẩn hóa về một schema 3D","textChars":42,"textLines":1,"bbox":[64,160,700,42]}
+{"kind":"textbox","id":"sh/3et4vm58","slide":3,"text":"• Volume ảnh: (4, 240, 240, 155), float32.\n• Label: (1, 240, 240, 155), các giá trị sau remap là 0, 1, 2, 3.\n• Raw label 4 được đưa về class nội bộ 3 để huấn luyện.","textPreview":"• Volume ảnh: (4, 240, 240, 155), float32. | • Label: (1, 240, 240, 155), các giá trị sau remap là 0, 1, 2, 3. | • Raw label 4 được đưa v...","textChars":164,"textLines":3,"bbox":[72,220,560,145]}
+{"kind":"shape","id":"sh/gb2l076h","slide":3,"bbox":[690,175,500,360]}
+{"kind":"shape","id":"sh/hcb2tcn2","slide":3,"bbox":[720,210,440,48]}
+{"kind":"textbox","id":"sh/5srmx8fe","slide":3,"text":"Raw","textPreview":"Raw","textChars":3,"textLines":1,"bbox":[740,222,80,24]}
+{"kind":"textbox","id":"sh/4rilo3et","slide":3,"text":"Model","textPreview":"Model","textChars":5,"textLines":1,"bbox":[830,222,80,24]}
+{"kind":"textbox","id":"sh/jq94vyx8","slide":3,"text":"Ý nghĩa","textPreview":"Ý nghĩa","textChars":7,"textLines":1,"bbox":[920,222,220,24]}
+{"kind":"shape","id":"sh/ip03mtw3","slide":3,"bbox":[720,268,440,48]}
+{"kind":"textbox","id":"sh/hormtofi","slide":3,"text":"0","textPreview":"0","textChars":1,"textLines":1,"bbox":[740,280,80,24]}
+{"kind":"textbox","id":"sh/wnilkjex","slide":3,"text":"0","textPreview":"0","textChars":1,"textLines":1,"bbox":[830,280,80,24]}
+{"kind":"textbox","id":"sh/vm94rexc","slide":3,"text":"Background","textPreview":"Background","textChars":10,"textLines":1,"bbox":[920,280,220,24]}
+{"kind":"shape","id":"sh/ulg3itwr","slide":3,"bbox":[720,326,440,48]}
+{"kind":"textbox","id":"sh/9k7mpof6","slide":3,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[740,338,80,24]}
+{"kind":"textbox","id":"sh/8zylgjel","slide":3,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[830,338,80,24]}
+{"kind":"textbox","id":"sh/032lwj6h","slide":3,"text":"NCR/NET","textPreview":"NCR/NET","textChars":7,"textLines":1,"bbox":[920,338,220,24]}
+{"kind":"shape","id":"sh/l4bm5on2","slide":3,"bbox":[720,384,440,48]}
+{"kind":"textbox","id":"sh/y1k3u9or","slide":3,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[740,396,80,24]}
+{"kind":"textbox","id":"sh/z2t43e5w","slide":3,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[830,396,80,24]}
+{"kind":"textbox","id":"sh/cfilsj6l","slide":3,"text":"ED","textPreview":"ED","textChars":2,"textLines":1,"bbox":[920,396,220,24]}
+{"kind":"shape","id":"sh/d0bm14n6","slide":3,"bbox":[720,442,440,48]}
+{"kind":"textbox","id":"sh/qd03q9of","slide":3,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[740,454,80,24]}
+{"kind":"textbox","id":"sh/be94ze50","slide":3,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[830,454,80,24]}
+{"kind":"textbox","id":"sh/wvm543mp","slide":3,"text":"ET","textPreview":"ET","textChars":2,"textLines":1,"bbox":[920,454,220,24]}
+{"kind":"textbox","id":"sh/xwvmd8na","slide":3,"text":"WT = label > 0   |   TC = {1,3}   |   ET = label 3","textPreview":"WT = label > 0   |   TC = {1,3}   |   ET = label 3","textChars":50,"textLines":1,"bbox":[720,485,450,40]}
+{"kind":"image","id":"im/8jmh8ry5","slide":3,"name":"","alt":"Minh họa vị trí các nhãn BraTS","bbox":[65,415,540,220]}
+{"kind":"notes","id":"nt/k20tge","slide":3,"text":"Cần nhấn mạnh sự khác nhau giữa raw label 4 và class nội bộ 3."}
+{"kind":"slide","id":"sl/8ztyuz","slide":4,"title":"PIPELINE","textShapes":23}
+{"kind":"textbox","id":"sh/872ls3yx","slide":4,"text":"PIPELINE","textPreview":"PIPELINE","textChars":8,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/76tkjyxc","slide":4,"text":"4  Pipeline xử lý dữ liệu","textPreview":"4  Pipeline xử lý dữ liệu","textChars":25,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/6503qtgr","slide":4,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/hcbmpsfe","slide":4,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/gb2lwnyt","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/vat4nixo","slide":4,"text":"Mỗi bước biến dữ liệu thô thành một phép đo có thể audit","textPreview":"Mỗi bước biến dữ liệu thô thành một phép đo có thể audit","textChars":56,"textLines":1,"bbox":[64,160,850,40]}
+{"kind":"shape","id":"sh/u9k3udg3","slide":4,"bbox":[72,235,330,120]}
+{"kind":"textbox","id":"sh/xgr2dofa","slide":4,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[92,252,52,28]}
+{"kind":"textbox","id":"sh/wfilkjyp","slide":4,"text":"NIfTI","textPreview":"NIfTI","textChars":5,"textLines":1,"bbox":[157,250,220,28]}
+{"kind":"textbox","id":"sh/al0n2t03","slide":4,"text":"Đọc 4 modality + mask","textPreview":"Đọc 4 modality + mask","textChars":21,"textLines":1,"bbox":[92,294,285,45]}
+{"kind":"shape","id":"sh/vm9obyho","slide":4,"bbox":[452,235,330,120]}
+{"kind":"textbox","id":"sh/wni543i9","slide":4,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[472,252,52,28]}
+{"kind":"textbox","id":"sh/xor6dozu","slide":4,"text":"QC","textPreview":"QC","textChars":2,"textLines":1,"bbox":[537,250,220,28]}
+{"kind":"textbox","id":"sh/ipkn6t0f","slide":4,"text":"Shape, affine, spacing, intensity","textPreview":"Shape, affine, spacing, intensity","textChars":33,"textLines":1,"bbox":[472,294,285,45]}
+{"kind":"shape","id":"sh/jqtofyh0","slide":4,"bbox":[832,235,330,120]}
+{"kind":"textbox","id":"sh/kr2583il","slide":4,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[852,252,52,28]}
+{"kind":"textbox","id":"sh/5sb6h8zq","slide":4,"text":"PREPROCESS","textPreview":"PREPROCESS","textChars":10,"textLines":1,"bbox":[917,250,220,28]}
+{"kind":"textbox","id":"sh/6tknadgb","slide":4,"text":"Z-score, clip percentile, remap label","textPreview":"Z-score, clip percentile, remap label","textChars":37,"textLines":1,"bbox":[852,294,285,45]}
+{"kind":"shape","id":"sh/7utojihw","slide":4,"bbox":[72,410,330,120]}
+{"kind":"textbox","id":"sh/3id4rix4","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[92,427,52,28]}
+{"kind":"textbox","id":"sh/2x4nydwj","slide":4,"text":"SPLIT","textPreview":"SPLIT","textChars":5,"textLines":1,"bbox":[157,425,220,28]}
+{"kind":"textbox","id":"sh/pkvmtsfa","slide":4,"text":"70% train / 15% val / 15% test","textPreview":"70% train / 15% val / 15% test","textChars":30,"textLines":1,"bbox":[92,469,285,45]}
+{"kind":"shape","id":"sh/ojm50nep","slide":4,"bbox":[452,410,330,120]}
+{"kind":"textbox","id":"sh/fut4nyxs","slide":4,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[472,427,52,28]}
+{"kind":"textbox","id":"sh/utknutwn","slide":4,"text":"PATCH","textPreview":"PATCH","textChars":5,"textLines":1,"bbox":[537,425,220,28]}
+{"kind":"textbox","id":"sh/hwvmp8fy","slide":4,"text":"Crop 96³ + augmentation","textPreview":"Crop 96³ + augmentation","textChars":23,"textLines":1,"bbox":[472,469,285,45]}
+{"kind":"shape","id":"sh/gv25w3ed","slide":4,"bbox":[832,410,330,120]}
+{"kind":"textbox","id":"sh/7qt4jyxw","slide":4,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[852,427,52,28]}
+{"kind":"textbox","id":"sh/6pk3qtwb","slide":4,"text":"INFERENCE","textPreview":"INFERENCE","textChars":9,"textLines":1,"bbox":[917,425,220,28]}
+{"kind":"textbox","id":"sh/wvy10zu9","slide":4,"text":"Sliding window + TTA + postprocess","textPreview":"Sliding window + TTA + postprocess","textChars":34,"textLines":1,"bbox":[852,469,285,45]}
+{"kind":"notes","id":"nt/8ztyuz","slide":4,"text":"Pipeline đi từ file NIfTI đến prediction volume và hình trực quan hóa."}
+{"kind":"slide","id":"sl/lhfqc3","slide":5,"title":"MODEL","textShapes":21}
+{"kind":"textbox","id":"sh/b2po72l8","slide":5,"text":"MODEL","textPreview":"MODEL","textChars":5,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/w3ypg72d","slide":5,"text":"5  Hai mô hình 3D","textPreview":"5  Hai mô hình 3D","textChars":17,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/x4769c3y","slide":5,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/mxw7axkb","slide":5,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/ny5o32lw","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/ozepc72h","slide":5,"text":"v1 dùng 3D U-Net, v2 dùng Swin UNETR","textPreview":"v1 dùng 3D U-Net, v2 dùng Swin UNETR","textChars":36,"textLines":1,"bbox":[64,160,940,42]}
+{"kind":"shape","id":"sh/90765c32","slide":5,"bbox":[90,285,145,120]}
+{"kind":"textbox","id":"sh/e9wn6dkf","slide":5,"text":"Input","textPreview":"Input","textChars":5,"textLines":1,"bbox":[100,310,125,26]}
+{"kind":"textbox","id":"sh/za5ozil0","slide":5,"text":"4 × 96³","textPreview":"4 × 96³","textChars":7,"textLines":1,"bbox":[100,350,125,30]}
+{"kind":"shape","id":"sh/fm18fupo","slide":5,"bbox":[240,340,48,4]}
+{"kind":"textbox","id":"sh/els76p83","slide":5,"text":"▶","textPreview":"▶","textChars":1,"textLines":1,"bbox":[252,320,30,30]}
+{"kind":"shape","id":"sh/1ojqh47u","slide":5,"bbox":[285,285,145,120]}
+{"kind":"textbox","id":"sh/gnap8zq9","slide":5,"text":"Encoder","textPreview":"Encoder","textChars":7,"textLines":1,"bbox":[295,310,125,26]}
+{"kind":"textbox","id":"sh/3ql8jep0","slide":5,"text":"3D U-Net","textPreview":"3D U-Net","textChars":8,"textLines":1,"bbox":[295,350,125,30]}
+{"kind":"shape","id":"sh/2ps7a9of","slide":5,"bbox":[435,340,48,4]}
+{"kind":"textbox","id":"sh/pc3qlo7q","slide":5,"text":"▶","textPreview":"▶","textChars":1,"textLines":1,"bbox":[447,320,30,30]}
+{"kind":"shape","id":"sh/obupcj6l","slide":5,"bbox":[480,285,145,120]}
+{"kind":"textbox","id":"sh/juh87apg","slide":5,"text":"Bottleneck","textPreview":"Bottleneck","textChars":10,"textLines":1,"bbox":[490,310,125,26]}
+{"kind":"textbox","id":"sh/it87y58v","slide":5,"text":"U-Net: 128 → 256","textPreview":"U-Net: 128 → 256","textChars":16,"textLines":1,"bbox":[490,350,125,30]}
+{"kind":"shape","id":"sh/m9gb6d8j","slide":5,"bbox":[630,340,48,4]}
+{"kind":"textbox","id":"sh/napsfi94","slide":5,"text":"▶","textPreview":"▶","textChars":1,"textLines":1,"bbox":[642,320,30,30]}
+{"kind":"shape","id":"sh/8byt8nqp","slide":5,"bbox":[675,285,145,120]}
+{"kind":"textbox","id":"sh/9c7ahsra","slide":5,"text":"Decoder","textPreview":"Decoder","textChars":7,"textLines":1,"bbox":[685,310,125,26]}
+{"kind":"textbox","id":"sh/y5wb2dsn","slide":5,"text":"Skip connections","textPreview":"Skip connections","textChars":16,"textLines":1,"bbox":[685,350,125,30]}
+{"kind":"shape","id":"sh/z65sbi98","slide":5,"bbox":[825,340,48,4]}
+{"kind":"textbox","id":"sh/07et4nqt","slide":5,"text":"▶","textPreview":"▶","textChars":1,"textLines":1,"bbox":[837,320,30,30]}
+{"kind":"shape","id":"sh/l8nad8ry","slide":5,"bbox":[870,285,145,120]}
+{"kind":"textbox","id":"sh/qhcbytsb","slide":5,"text":"Output","textPreview":"Output","textChars":6,"textLines":1,"bbox":[880,310,125,26]}
+{"kind":"textbox","id":"sh/bi5s7y9w","slide":5,"text":"4 classes","textPreview":"4 classes","textChars":9,"textLines":1,"bbox":[880,350,125,30]}
+{"kind":"textbox","id":"sh/twbedwbe","slide":5,"text":"v1: 3D U-Net, 4.81M tham số","textPreview":"v1: 3D U-Net, 4.81M tham số","textChars":27,"textLines":1,"bbox":[90,460,470,30]}
+{"kind":"textbox","id":"sh/sv2dkrat","slide":5,"text":"v2: Swin UNETR, 15.71M tham số\nTransformer encoder, mạnh hơn nhưng cần protocol riêng.","textPreview":"v2: Swin UNETR, 15.71M tham số | Transformer encoder, mạnh hơn nhưng cần protocol riêng.","textChars":86,"textLines":2,"bbox":[650,455,470,70]}
+{"kind":"notes","id":"nt/lhfqc3","slide":5,"text":"v1 là baseline 3D U-Net; v2 dùng Swin UNETR. Vì cohort và protocol khác nhau, cần thận trọng khi so sánh trực tiếp."}
+{"kind":"slide","id":"sl/w2plwk","slide":6,"title":"TRAINING","textShapes":7}
+{"kind":"textbox","id":"sh/vipsbe5g","slide":6,"text":"TRAINING","textPreview":"TRAINING","textChars":8,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/gjy9kz6l","slide":6,"text":"6  Huấn luyện và checkpoint","textPreview":"6  Huấn luyện và checkpoint","textChars":27,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/hk7ad4n6","slide":6,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/6dwrepoj","slide":6,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/7eps7u54","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/8fy9gz6p","slide":6,"text":"Hai notebook đều chọn checkpoint trên validation, nhưng protocol khác nhau","textPreview":"Hai notebook đều chọn checkpoint trên validation, nhưng protocol khác nhau","textChars":74,"textLines":1,"bbox":[64,160,1080,42]}
+{"kind":"shape","id":"sh/q90bqt43","slide":6,"bbox":[710,215,470,345]}
+{"kind":"textbox","id":"sh/ra9sjy58","slide":6,"text":"• v1: 3D U-Net, resume tới epoch 50, checkpoint epoch 40.\n• v2: Swin UNETR, feature_size 24, đã train đủ 20 epoch.\n• v1 có held-out test; v2 chỉ báo cáo validation.\n• Mixed precision + GradScaler dùng ở cả pipeline.","textPreview":"• v1: 3D U-Net, resume tới epoch 50, checkpoint epoch 40. | • v2: Swin UNETR, feature_size 24, đã train đủ 20 epoch. | • v1 có held-out t...","textChars":215,"textLines":4,"bbox":[745,250,395,250]}
+{"kind":"textbox","id":"sh/ru5kre1w","slide":6,"text":"Đường cong hiển thị là của notebook v1.","textPreview":"Đường cong hiển thị là của notebook v1.","textChars":39,"textLines":1,"bbox":[745,510,370,25]}
+{"kind":"image","id":"im/0zmd0jqd","slide":6,"name":"","alt":"Training loss và validation Dice của v1","bbox":[65,230,590,355]}
+{"kind":"notes","id":"nt/w2plwk","slide":6,"text":"Không gọi đây là so sánh công bằng vì v1 và v2 không cùng cohort, split và protocol đánh giá."}
+{"kind":"slide","id":"sl/8bm9i7","slide":7,"title":"METRICS","textShapes":16}
+{"kind":"textbox","id":"sh/u5gfytg7","slide":7,"text":"METRICS","textPreview":"METRICS","textChars":7,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/hs7etofi","slide":7,"text":"7  Đánh giá mô hình","textPreview":"7  Đánh giá mô hình","textChars":19,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/g7yx0jyd","slide":7,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/725wnexg","slide":7,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/61wfu9gv","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/t4nepofm","slide":7,"text":"Một metric không đủ để mô tả chất lượng segmentation","textPreview":"Một metric không đủ để mô tả chất lượng segmentation","textChars":52,"textLines":1,"bbox":[64,160,900,42]}
+{"kind":"shape","id":"sh/s3exwjy1","slide":7,"bbox":[65,250,205,190]}
+{"kind":"textbox","id":"sh/ry9gzix0","slide":7,"text":"Dice","textPreview":"Dice","textChars":4,"textLines":1,"bbox":[85,282,165,32]}
+{"kind":"textbox","id":"sh/qx0f6dwf","slide":7,"text":"Độ chồng lấp\nCàng cao càng tốt","textPreview":"Độ chồng lấp | Càng cao càng tốt","textChars":30,"textLines":2,"bbox":[85,345,165,65]}
+{"kind":"shape","id":"sh/snypo3yx","slide":7,"bbox":[300,250,205,190]}
+{"kind":"textbox","id":"sh/do7qh8fi","slide":7,"text":"IoU","textPreview":"IoU","textChars":3,"textLines":1,"bbox":[320,282,165,32]}
+{"kind":"textbox","id":"sh/6lg7mtgr","slide":7,"text":"Giao / hợp\nKhắt khe hơn Dice","textPreview":"Giao / hợp | Khắt khe hơn Dice","textChars":28,"textLines":2,"bbox":[320,345,165,65]}
+{"kind":"shape","id":"sh/rmp8fyxc","slide":7,"bbox":[535,250,205,190]}
+{"kind":"textbox","id":"sh/4zypkjy1","slide":7,"text":"Precision","textPreview":"Precision","textChars":9,"textLines":1,"bbox":[555,282,165,32]}
+{"kind":"textbox","id":"sh/5k7qdof6","slide":7,"text":"Dự đoán u đúng\nÍt false positive","textPreview":"Dự đoán u đúng | Ít false positive","textChars":32,"textLines":2,"bbox":[555,345,165,65]}
+{"kind":"shape","id":"sh/ixw7itgv","slide":7,"bbox":[770,250,205,190]}
+{"kind":"textbox","id":"sh/jyp8byxg","slide":7,"text":"Recall","textPreview":"Recall","textChars":6,"textLines":1,"bbox":[790,282,165,32]}
+{"kind":"textbox","id":"sh/wvepgjyp","slide":7,"text":"Tìm đủ vùng u\nÍt false negative","textPreview":"Tìm đủ vùng u | Ít false negative","textChars":31,"textLines":2,"bbox":[790,345,165,65]}
+{"kind":"shape","id":"sh/hwnq9ofa","slide":7,"bbox":[1005,250,205,190]}
+{"kind":"textbox","id":"sh/xgvexg32","slide":7,"text":"HD95","textPreview":"HD95","textChars":4,"textLines":1,"bbox":[1025,282,165,32]}
+{"kind":"textbox","id":"sh/cfmxobmh","slide":7,"text":"Khoảng cách biên\nCàng thấp càng tốt","textPreview":"Khoảng cách biên | Càng thấp càng tốt","textChars":35,"textLines":2,"bbox":[1025,345,165,65]}
+{"kind":"textbox","id":"sh/bedwv6lw","slide":7,"text":"Quy ước empty-empty trong notebook: Dice/IoU/Precision/Recall = 1, HD95 = 0.","textPreview":"Quy ước empty-empty trong notebook: Dice/IoU/Precision/Recall = 1, HD95 = 0.","textChars":76,"textLines":1,"bbox":[100,520,1060,35]}
+{"kind":"notes","id":"nt/8bm9i7","slide":7,"text":"HD95 tính theo khoảng cách vật lý có spacing, không chỉ khoảng cách voxel."}
+{"kind":"slide","id":"sl/syi67k","slide":8,"title":"RESULTS","textShapes":26}
+{"kind":"textbox","id":"sh/d8jmlwbm","slide":8,"text":"RESULTS","textPreview":"RESULTS","textChars":7,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/q5snqhsv","slide":8,"text":"8  Kết quả của v1 và v2","textPreview":"8  Kết quả của v1 và v2","textChars":23,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/b614jmtg","slide":8,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/oja5ora5","slide":8,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/p4jmhwba","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/2h8nmhsz","slide":8,"text":"Các con số chỉ nên đọc cùng với cohort và protocol tương ứng","textPreview":"Các con số chỉ nên đọc cùng với cohort và protocol tương ứng","textChars":60,"textLines":1,"bbox":[64,160,1070,42]}
+{"kind":"shape","id":"sh/3ih4fmtk","slide":8,"bbox":[100,235,220,54]}
+{"kind":"textbox","id":"sh/8fu50ba9","slide":8,"text":"Model / split","textPreview":"Model / split","textChars":13,"textLines":1,"bbox":[108,253,204,25]}
+{"kind":"shape","id":"sh/9036tgbu","slide":8,"bbox":[320,235,180,54]}
+{"kind":"textbox","id":"sh/5wnex4r2","slide":8,"text":"Mean Dice","textPreview":"Mean Dice","textChars":9,"textLines":1,"bbox":[328,253,164,25]}
+{"kind":"shape","id":"sh/kvex4jax","slide":8,"bbox":[500,235,150,54]}
+{"kind":"textbox","id":"sh/ja5wve9c","slide":8,"text":"WT","textPreview":"WT","textChars":2,"textLines":1,"bbox":[508,253,134,25]}
+{"kind":"shape","id":"sh/i9cf29sr","slide":8,"bbox":[650,235,150,54]}
+{"kind":"textbox","id":"sh/x83et4r6","slide":8,"text":"TC","textPreview":"TC","textChars":2,"textLines":1,"bbox":[658,253,134,25]}
+{"kind":"shape","id":"sh/w7ud0zal","slide":8,"bbox":[800,235,150,54]}
+{"kind":"textbox","id":"sh/v6lwru90","slide":8,"text":"ET","textPreview":"ET","textChars":2,"textLines":1,"bbox":[808,253,134,25]}
+{"kind":"shape","id":"sh/a5cvypsf","slide":8,"bbox":[950,235,180,54]}
+{"kind":"textbox","id":"sh/h47e5ora","slide":8,"text":"HD95 (mm)","textPreview":"HD95 (mm)","textChars":9,"textLines":1,"bbox":[958,253,164,25]}
+{"kind":"shape","id":"sh/g3yxc3qp","slide":8,"bbox":[100,289,220,58]}
+{"kind":"textbox","id":"sh/076h87y1","slide":8,"text":"v1 validation","textPreview":"v1 validation","textChars":13,"textLines":1,"bbox":[108,308,204,25]}
+{"kind":"shape","id":"sh/18fy1czm","slide":8,"bbox":[320,289,180,58]}
+{"kind":"textbox","id":"sh/e5oz6xgv","slide":8,"text":"0.8052","textPreview":"0.8052","textChars":6,"textLines":1,"bbox":[328,308,164,25]}
+{"kind":"shape","id":"sh/f6xgz2hg","slide":8,"bbox":[500,289,150,58]}
+{"kind":"textbox","id":"sh/s3mh4ny5","slide":8,"text":"0.8308","textPreview":"0.8308","textChars":6,"textLines":1,"bbox":[508,308,134,25]}
+{"kind":"shape","id":"sh/d4vyxszq","slide":8,"bbox":[650,289,150,58]}
+{"kind":"textbox","id":"sh/qh4z2xgz","slide":8,"text":"0.8125","textPreview":"0.8125","textChars":6,"textLines":1,"bbox":[658,308,134,25]}
+{"kind":"shape","id":"sh/r2dgvihk","slide":8,"bbox":[800,289,150,58]}
+{"kind":"textbox","id":"sh/4fmh0nyt","slide":8,"text":"0.7724","textPreview":"0.7724","textChars":6,"textLines":1,"bbox":[808,308,134,25]}
+{"kind":"shape","id":"sh/5gvytsze","slide":8,"bbox":[950,289,180,58]}
+{"kind":"textbox","id":"sh/7at0ji1g","slide":8,"text":"29.683","textPreview":"29.683","textChars":6,"textLines":1,"bbox":[958,308,164,25]}
+{"kind":"shape","id":"sh/69kzadkv","slide":8,"bbox":[100,347,220,58]}
+{"kind":"textbox","id":"sh/tcbilsj6","slide":8,"text":"v1 held-out test","textPreview":"v1 held-out test","textChars":16,"textLines":1,"bbox":[108,366,204,25]}
+{"kind":"shape","id":"sh/8b2hcn2l","slide":8,"bbox":[320,347,180,58]}
+{"kind":"textbox","id":"sh/ved0ni1c","slide":8,"text":"0.7858","textPreview":"0.7858","textChars":6,"textLines":1,"bbox":[328,366,164,25]}
+{"kind":"shape","id":"sh/udkzedkr","slide":8,"bbox":[500,347,150,58]}
+{"kind":"textbox","id":"sh/hgvipsji","slide":8,"text":"0.8158","textPreview":"0.8158","textChars":6,"textLines":1,"bbox":[508,366,134,25]}
+{"kind":"shape","id":"sh/gfmhgn2x","slide":8,"bbox":[650,347,150,58]}
+{"kind":"textbox","id":"sh/32d0r218","slide":8,"text":"0.7938","textPreview":"0.7938","textChars":6,"textLines":1,"bbox":[658,366,134,25]}
+{"kind":"shape","id":"sh/i14zixk3","slide":8,"bbox":[800,347,150,58]}
+{"kind":"textbox","id":"sh/mxwba5cb","slide":8,"text":"0.7476","textPreview":"0.7476","textChars":6,"textLines":1,"bbox":[808,366,134,25]}
+{"kind":"shape","id":"sh/ny5s3adw","slide":8,"bbox":[950,347,180,58]}
+{"kind":"textbox","id":"sh/ojetcvuh","slide":8,"text":"31.117","textPreview":"31.117","textChars":6,"textLines":1,"bbox":[958,366,164,25]}
+{"kind":"shape","id":"sh/9kna50v2","slide":8,"bbox":[100,420,1030,84]}
+{"kind":"textbox","id":"sh/alwbe5c7","slide":8,"text":"v2 Swin UNETR validation (204 ca): Mean Dice 0.8653  |  WT 0.8498  |  TC 0.7461  |  ET 1.0000*","textPreview":"v2 Swin UNETR validation (204 ca): Mean Dice 0.8653  |  WT 0.8498  |  TC 0.7461  |  ET 1.0000*","textChars":94,"textLines":1,"bbox":[125,438,980,25]}
+{"kind":"textbox","id":"sh/bm5s7ads","slide":8,"text":"*ET = 1.0 ở toàn bộ thống kê do quy ước empty-empty; v2 không có held-out test/HD95 trong output này.","textPreview":"*ET = 1.0 ở toàn bộ thống kê do quy ước empty-empty; v2 không có held-out test/HD95 trong output này.","textChars":101,"textLines":1,"bbox":[125,470,980,22]}
+{"kind":"textbox","id":"sh/wnytgfud","slide":8,"text":"Không kết luận v2 tốt hơn v1 nếu chưa chạy cùng cohort, split và protocol.","textPreview":"Không kết luận v2 tốt hơn v1 nếu chưa chạy cùng cohort, split và protocol.","textChars":74,"textLines":1,"bbox":[110,550,980,30]}
+{"kind":"notes","id":"nt/syi67k","slide":8,"text":"v1 có validation và held-out test. v2 chỉ có validation 204 ca, Mean Dice .8653 và ET luôn 1.0 theo output thống kê."}
+{"kind":"slide","id":"sl/38cdkf","slide":9,"title":"EVIDENCE","textShapes":9}
+{"kind":"textbox","id":"sh/5o3utk3u","slide":9,"text":"EVIDENCE","textPreview":"EVIDENCE","textChars":8,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/i1cby54j","slide":9,"text":"9  Trực quan hóa prediction","textPreview":"9  Trực quan hóa prediction","textChars":27,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/j2lcral4","slide":9,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/wzatwfmd","slide":9,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/x03upk3y","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/axsbu547","slide":9,"text":"Một ca mẫu cho thấy prediction bám khá sát ground truth ở cả ba mặt phẳng","textPreview":"Một ca mẫu cho thấy prediction bám khá sát ground truth ở cả ba mặt phẳng","textChars":73,"textLines":1,"bbox":[64,160,1050,42]}
+{"kind":"shape","id":"sh/8vatsvmh","slide":9,"bbox":[885,230,305,340]}
+{"kind":"textbox","id":"sh/9wjul03m","slide":9,"text":"Case","textPreview":"Case","textChars":4,"textLines":1,"bbox":[915,262,80,20]}
+{"kind":"textbox","id":"sh/9gze1432","slide":9,"text":"BraTS-GLI-01021-000","textPreview":"BraTS-GLI-01021-000","textChars":19,"textLines":1,"bbox":[915,295,230,32]}
+{"kind":"textbox","id":"sh/8fqd8zmh","slide":9,"text":"Ba cột chính:\nFLAIR • Ground truth • U-Net3d","textPreview":"Ba cột chính: | FLAIR • Ground truth • U-Net3d","textChars":44,"textLines":2,"bbox":[915,365,230,70]}
+{"kind":"textbox","id":"sh/nehwzulw","slide":9,"text":"Hình minh họa giúp kiểm tra lỗi biên, vùng thiếu hoặc vùng dự đoán thừa.","textPreview":"Hình minh họa giúp kiểm tra lỗi biên, vùng thiếu hoặc vùng dự đoán thừa.","textChars":72,"textLines":1,"bbox":[915,475,230,64]}
+{"kind":"image","id":"im/exc761wf","slide":9,"name":"","alt":"Prediction theo axial coronal sagittal","bbox":[75,225,760,410]}
+{"kind":"notes","id":"nt/38cdkf","slide":9,"text":"Hình chỉ là một ca thuận lợi để kiểm tra định tính; metric toàn test mới là bằng chứng chính."}
+{"kind":"slide","id":"sl/q3ubp7","slide":10,"title":"TAKEAWAYS","textShapes":10}
+{"kind":"textbox","id":"sh/cvq1srit","slide":10,"text":"TAKEAWAYS","textPreview":"TAKEAWAYS","textChars":9,"textLines":1,"bbox":[64,32,720,22]}
+{"kind":"textbox","id":"sh/buhkjmh8","slide":10,"text":"10  Kết luận và điểm cần audit","textPreview":"10  Kết luận và điểm cần audit","textChars":30,"textLines":1,"bbox":[64,62,1120,60]}
+{"kind":"shape","id":"sh/qt8jqh0n","slide":10,"bbox":[64,130,1152,3]}
+{"kind":"textbox","id":"sh/lkj2pgza","slide":10,"text":"SIC Capstone 2026  |  Notebook v1","textPreview":"SIC Capstone 2026  |  Notebook v1","textChars":33,"textLines":1,"bbox":[64,684,800,18]}
+{"kind":"textbox","id":"sh/0zqlwbip","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1175,684,40,18]}
+{"kind":"textbox","id":"sh/zyhkn6hk","slide":10,"text":"Hai mô hình cho thấy tiến trình phát triển, chưa phải một phép so sánh công bằng","textPreview":"Hai mô hình cho thấy tiến trình phát triển, chưa phải một phép so sánh công bằng","textChars":80,"textLines":1,"bbox":[64,160,1100,42]}
+{"kind":"shape","id":"sh/yx83u10z","slide":10,"bbox":[75,235,520,320]}
+{"kind":"textbox","id":"sh/14f2dcz6","slide":10,"text":"Đã làm được","textPreview":"Đã làm được","textChars":11,"textLines":1,"bbox":[105,268,220,28]}
+{"kind":"textbox","id":"sh/g361k7il","slide":10,"text":"• v1: 3D U-Net baseline, có held-out test.\n• v2: Swin UNETR, validation Mean Dice 0.8653.\n• Cả hai dùng bốn modality MRI và mask 3D.\n• Đã kiểm tra định tính bằng hình prediction.","textPreview":"• v1: 3D U-Net baseline, có held-out test. | • v2: Swin UNETR, validation Mean Dice 0.8653. | • Cả hai dùng bốn modality MRI và mask 3D. ...","textChars":178,"textLines":4,"bbox":[105,320,430,180]}
+{"kind":"shape","id":"sh/6xknu5wz","slide":10,"bbox":[650,235,540,320]}
+{"kind":"textbox","id":"sh/ryto3adk","slide":10,"text":"Cần trả lời khi bảo vệ","textPreview":"Cần trả lời khi bảo vệ","textChars":22,"textLines":1,"bbox":[680,268,350,28]}
+{"kind":"textbox","id":"sh/sz25wfep","slide":10,"text":"• Cohort và split khác nhau, không so sánh Dice trực tiếp.\n• v2 chỉ có validation, chưa có held-out test.\n• NIfTI output cần reverse-map class 3 → raw label 4 nếu theo chuẩn BraTS.\n• Kết quả chưa phải chẩn đoán lâm sàng.","textPreview":"• Cohort và split khác nhau, không so sánh Dice trực tiếp. | • v2 chỉ có validation, chưa có held-out test. | • NIfTI output cần reverse-...","textChars":220,"textLines":4,"bbox":[680,320,455,200]}
+{"kind":"textbox","id":"sh/t0b65kva","slide":10,"text":"Thông điệp cuối: so sánh đúng protocol trước khi so sánh con số.","textPreview":"Thông điệp cuối: so sánh đúng protocol trước khi so sánh con số.","textChars":64,"textLines":1,"bbox":[75,610,1080,32]}
+{"kind":"notes","id":"nt/q3ubp7","slide":10,"text":"Kết luận cần phân biệt cải tiến mô hình với thay đổi protocol đánh giá."}
