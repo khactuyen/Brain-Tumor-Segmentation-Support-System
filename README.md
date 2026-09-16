@@ -28,7 +28,7 @@ Notebook v1 có held-out test. Notebook v2 hiện chỉ báo cáo validation.
 ## Ứng dụng web
 
 Ứng dụng nằm trong `BraTS_Model/`, sử dụng FastAPI/Gradio và checkpoint đã huấn luyện.
-
+Link Gradio App : https://huggingface.co/spaces/vokhactuyen/BraTS_Model
 ```powershell
 cd BraTS_Model
 python -m venv .venv
